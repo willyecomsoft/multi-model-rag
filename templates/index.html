@@ -1,0 +1,257 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chatbot</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <style>
+        .top-right-links {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 20px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            font-family: Monospace;
+        }
+        
+        #header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        #chatbox {
+            height: calc(100% - 100px);
+            overflow-y: scroll;
+            padding: 10px;
+            left: 3%;
+            right: 3%;
+            width: 94%;
+            bottom: 50px;
+            max-height: calc(100vh - 200px); /* Adjust this value as needed */
+            overflow-y: auto;
+        }
+        
+        .user-message {
+            text-align: right;
+            background-color: beige;
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            width: 50%;
+            align-self: flex-end;
+            margin-left: auto; /* Added */
+            font-family: Monospace;
+        }
+        
+        .system-message {
+            text-align: left;
+            background-color: lightblue; /* Updated */
+            border-radius: 10px;
+            padding: 5px 10px;
+            margin-bottom: 10px;
+            width: 50%;
+            align-self: flex-start; /* Updated */
+            font-family: Monospace;
+        }
+
+        .documents-found-title {
+            text-align: left;
+            padding: 5px 10px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            align-self: flex-start; /* Updated */
+            font-family: Monospace;
+        }
+
+        #message-container {
+            display: flex;
+            justify-content: center;
+            position: fixed;
+            bottom: 20px;
+            left: 5%;
+            right: 5%;
+            width: 90%;
+        }
+        
+        #message {
+            flex: 1;
+            padding: 5px;
+            margin-right: 10px;
+            font-family: Monospace;
+        }
+        
+        #send {
+            padding: 5px 10px;
+            font-family: Monospace;
+        }
+
+        #real-message-container {
+            left: 5%;
+            right: 5%;
+            width: 90%;
+        }
+
+        .documents-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .document-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            width: 45%; /* Adjust the width of the boxes as needed */
+        }
+
+        .text-content {
+            width: 60%;
+            margin-bottom: 20px;
+            white-space: pre-wrap; /* Preserve whitespace and line breaks */
+        }
+
+        .document-category {
+            margin: 0;
+        }
+
+        .category {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .image-content img {
+            height: auto;
+        }
+
+        .table-content table {
+            border-collapse: collapse;
+        }
+        .table-content th, .table-content td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        .table-content th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-right-links">
+        <a href="http://localhost:5002/upload">Upload Document</a>
+    </div>
+    <div id="header">Multi Model RAG with Couchbase</div>
+    <div id="chatbox"> </div>
+    <div id="message-container">
+        <input id="message" type="text" onkeydown="if(event.keyCode===13) document.getElementById('send').click()"> <!-- Updated -->
+        <button id="send">Send</button>
+    </div>
+    <script>
+        var socket = io.connect('http://localhost:5002');
+        var lastTimestamp = null;
+
+        function createDocumentBox(doc, index) {
+            const icon = doc.category === "image_summary" ? "🎑" : 
+                         doc.category === "text_summary" ? "📝" : "📊";
+
+            const tempContainer = window.document.createElement('div');
+            tempContainer.innerHTML = `<div class="document-box"><p class="document-category">${icon}</p></div>`;
+            const documentBox = tempContainer.firstElementChild;
+            documentBox.dataset.status = 'collapsed';
+
+            documentBox.addEventListener('click', () => {
+                if (documentBox.dataset.status === 'collapsed') {
+                    documentBox.dataset.status = 'expanded';
+                    documentBox.innerHTML = `
+                        <p class="document-category">${icon}</p>
+                        <div class="text-content">${doc.text}</div>
+                        <div class="category">Category: ${doc.category}</div>
+                        <div class="content">${getContentHTML(doc)}</div>
+                    `;
+                } else {
+                    documentBox.dataset.status = 'collapsed';
+                    documentBox.innerHTML = `<p class="document-category">${icon}</p>`;
+                }
+            });
+
+            return documentBox;
+        }
+
+        function getContentHTML(document) {
+            if (document.category === 'image_summary') {
+                return `<div class="image-content"><img src="data:image/png;base64,${document.content}" alt="Image"></div>`;
+            } else if (document.category === 'table_summary') {
+                const rows = document.content.split('\n').map(row => {
+                    const cells = row.split(',').map(cell => `<td>${cell}</td>`).join('');
+                    return `<tr>${cells}</tr>`;
+                }).join('');
+                return `<div class="table-content"><table>${rows}</table></div>`;
+                
+            } else {
+                return `<div class="text-content">${document.content}</div>`;
+            }
+        }
+
+
+        socket.on("found_docs", function(msg) {
+            const { doc_ids, documents } = msg
+            console.log("doc_ids", doc_ids)
+            console.log("documents", documents)
+            
+            // Insert a message that says "Source Documents Found:"
+            $('#chatbox').append('<p class="documents-found-title">Source Documents Found:</p>');
+
+            // Create a div for horizontal element placements
+            const documentsContainer = $('<div class="documents-container"></div>');
+
+            // Iterate over the documents array and create a box for each document
+            documents.forEach((document, index) => {
+                const documentBox = createDocumentBox(document, index);
+                documentsContainer.append(documentBox);
+            });
+
+            // Append the documents container to the chatbox
+            $('#chatbox').append(documentsContainer);            
+        })
+
+        socket.on('response', function(msg) {
+            const { timestamp, message_string, documents, document_ids } = msg;
+
+            if (timestamp === lastTimestamp) {
+                $('.system-message:last').text(message_string);
+            } else {
+                $('#chatbox').append('<p class="system-message">' + message_string + '</p>');
+                $('.system-message:last').text(message_string);
+            }
+            lastTimestamp = timestamp;
+            $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+        });
+        
+        $('#send').click(function() {
+            console.log('sending message')
+            //send message to server
+            var msg = $('#message').val();
+            $('#message').val('');
+            $('#chatbox').append('<p class="user-message">' + msg + '</p>');
+
+            const message_to_send = {
+                question: msg
+            }
+
+            socket.emit('message', message_to_send);
+            $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);
+        });
+    </script>
+</body>
+</html>
