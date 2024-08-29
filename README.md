@@ -1,8 +1,8 @@
-<br><br><br>
+<br><br>
 
 # Multi-Model RAG with Couchbase
 
-<br><br>
+<br>
 
 Multi-model RAG is, just, cool. So, let's give it a try with Couchbase as a backend.
 
@@ -12,7 +12,7 @@ This demo is an inspiration from Sudarshan Koirala's fantastic [walk-through](ht
 
 
 
-<br>
+<br><br>
 
 
 ## What Do I Need to Run This Demo? 
@@ -89,7 +89,7 @@ Unselect "Analytics", and "Backup". Leave the rest unchanged and click "**Save &
 
 <br><br>
 
-All good! You'll see the empty-ish screen below since we haven't created the data structure. Replacing variables "EE_HOSTNAME" with your VM hostname, "CB_USERNAME" and "CB_PASSWORD" with the credentials you just created, execute the following REST calls to create the data structures we'll use.
+All good! You'll see the empty-ish screen below since we haven't created the data structure. Now, execute the following REST calls to create the data structures we'll use, replacing variables "EE_HOSTNAME" with your VM hostname, "CB_USERNAME" and "CB_PASSWORD" with the credentials you just created, 
 
 ```
 **1. create "data" bucket, with quota of RAM@ 10,000MB, and flushing enabled**
@@ -118,8 +118,11 @@ curl -X POST http://<EE_HOSTNAME>:8091/pools/default/buckets/data/scopes/data/co
 
 >🙌🏻 In a production set up you'll need at least 3 nodes to run Couchbase for HA purposes. In our case, let's just use 1 node for simplicity.
 
+<br><br>
 
 For us to effectively run vector & full-text search, we will create a search index under "Search" service. 
+
+<br>
 
 ![image](https://github.com/user-attachments/assets/66c00519-e6e2-4547-98b7-03567924e854)
 
@@ -156,6 +159,7 @@ CB_USERNAME={username_created}
 CB_PASSWORD={password_created}
 ```
 
+<br><br>
 
 Then, run the following Docker command to buil a Docker container from the published Image:
 
@@ -172,7 +176,7 @@ All good. The container is now running locally on port 5002. We can run the code
 docker logs -f cb-multi-model-rag //replace "cb-multi-model-rag" with the actual container name if modified 
 ```
 
-<br><br>
+<br>
 
 <img width="1088" alt="image" src="https://github.com/user-attachments/assets/95d20245-c4fb-4d2a-a75b-b455e58c5205">
 
@@ -185,9 +189,15 @@ docker logs -f cb-multi-model-rag //replace "cb-multi-model-rag" with the actual
 
 On your browser, access this link below to upload a PFD to chat with. Ideally you'll want to select a document that has texts, tables, and images. To preserve your token consumption, avoid too large documents.
 
+<br>
+
 > localhost:5002/upload
 
+<br>
+
 I'll be using the [NoSQL Benchmark Report 2023](https://www.couchbase.com/content/capella/altoros-report-eval-nosql-dbaas) produced by Altoros. To decrease my token consumption throughout the demo, I've truncated the document to only include section 4.1, ie., summary for update-heavy workloads, which will be uploaded here. You can find both documents under directory **templates/assets**.  
+
+We're using [Unstructured](https://github.com/Unstructured-IO/unstructured) library for parsing the document and it takes a while to finish. 
 
 <br>
 
@@ -201,7 +211,7 @@ I'll be using the [NoSQL Benchmark Report 2023](https://www.couchbase.com/conten
 
 <br>
 
-We're using [Unstructured](https://github.com/Unstructured-IO/unstructured) library for parsing the document and it takes a while to finish. After ~2 minutes, go to Couchbase console, under "Documents", select keyspace **"data"."data"."data"**. There you'll have the parsed documents. Logic here is to store text by a predefined logics, while LLM is used to give summary of images and tables found. All 3 types of information are then stored in Couchbase, along with their embeddings. 
+After ~2 minutes, go to Couchbase console, under "Documents", select keyspace **"data"."data"."data"**. There you'll have the parsed documents. Logic here is to store text by a predefined logics, while LLM is used to give summary of images and tables found. All 3 types of information are then stored in Couchbase, along with their embeddings. 
 
 ![image](https://github.com/user-attachments/assets/be71380c-cc25-4491-8fd3-65433f6dce4c)
 
@@ -233,9 +243,20 @@ If you feel like gaining a bit more insights on your images, run more queries to
 ![image](https://github.com/user-attachments/assets/c184d4ae-eb38-41d1-aa2f-323c80a12913)
 
 
+<br><br>
+
+
 **Let's ask some questions!**
 
 Go to **localhost:5002** on your browser, and let's have some fun! 
+
+<br>
+
+```
+In the bar charts for 50% read and 50% write workload, how does Couchbase does in terms of throughput in various clsuter sizes?
+```
+
+<br>
 
 ![image](https://github.com/user-attachments/assets/20627287-df47-42b5-a61c-f85884c94609)
 
