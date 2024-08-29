@@ -9,6 +9,7 @@ from langchain.schema.messages import HumanMessage
 import uuid
 from llm import create_openai_embeddings
 from couchbaseops import insert_doc
+from sharedfunctions.print import print_bold
 
 
 load_dotenv()
@@ -40,11 +41,6 @@ def partition_document():
         elif "unstructured.documents.elements.CompositeElement" in str(type(element)):
             texts.append(str(element))
             
-            
-    # chunk tables and texts to only include 1 element. only for testing, to be removed later 
-    tables = tables[:1]
-    texts = texts[:1]
-
 
     # Prompt
     prompt_text = """You are an assistant tasked with summarizing tables and text. \
@@ -62,6 +58,7 @@ def partition_document():
     # Apply to tables
     table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
 
+    # Image summarization
     def encode_image(image_path):
         ''' Getting the base64 string '''
         with open(image_path, "rb") as image_file:
@@ -101,12 +98,7 @@ def partition_document():
     path_figures = "figures/"
 
     # Read images, encode to base64 strings
-    for img_file in sorted(os.listdir(path_figures)):
-        
-        # only process the first 1 image. to be removed later
-        if len(img_base64_list) == 1:
-            break
-        
+    for img_file in sorted(os.listdir(path_figures)):        
         if img_file.endswith('.jpg'):
             img_path = os.path.join(path_figures, img_file)
             base64_image = encode_image(img_path)
@@ -116,6 +108,8 @@ def partition_document():
     
     # Insert into couchbase
     def insert_into_couchbase(docs, category, ids=None):
+        print_bold(f"Inserting {category} into couchbase")
+        
         ''' Inserting into couchbase '''
         for doc in docs:
             embeddings = create_openai_embeddings(doc)

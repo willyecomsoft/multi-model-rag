@@ -10,25 +10,33 @@ from sharedfunctions.print import print_error, print_success, print_bold
 from parsedoc import partition_document
 from couchbaseops import run_query
 
+
+# Load the environment variables
 load_dotenv()
 
+
+# Initialize the Flask app and the SocketIO instance
 app = Flask(__name__)
 socketio = SocketIO(app)
 
+
+# initialize chat history
 demo_ephemeral_chat_history = ChatMessageHistory()
     
+    
+# Define the route for the index page
 @app.route('/')
 def index():
     return render_template('index.html')
 
-@app.route('/check_existing_data')
-def check_existing_data():
-    return render_template('check_existing_data.html')
 
+# Define the route for the upload page
 @app.route('/upload')
 def upload():
     return render_template('upload.html')
 
+
+# Execute incoming user question
 @socketio.on('message')
 def run_multi_model_search(question_data):
     
@@ -81,6 +89,8 @@ def run_multi_model_search(question_data):
     #6. add bot message, both locally and to couchbase
     demo_ephemeral_chat_history.add_ai_message(message_string)
 
+
+# Parse the document from the REST call
 @app.route('/parse_document', methods=['POST'])
 def parse_document():
     
@@ -112,7 +122,7 @@ def parse_document():
     
     return jsonify({"message": f"File saved to {save_path}"}), 200
     
-  
-
+    
+# Run the app
 if __name__ == '__main__':
     socketio.run(app, host='0.0.0.0', port=5002)

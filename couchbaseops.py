@@ -35,7 +35,7 @@ def get_doc(bucket, scope, collection, doc_id):
         
         return None
 
-
+# Insert a document into a collection
 def insert_doc(bucket, scope, collection, doc, doc_id=None): 
     
     cb_collection = cluster.bucket(bucket).scope(scope).collection(collection)
@@ -57,11 +57,11 @@ def insert_doc(bucket, scope, collection, doc, doc_id=None):
         
         return None 
 
-
+# Generate a UUID
 def generate_uuid(): 
     return uuid.uuid4()
 
-
+# Run vector search
 def cb_vector_search(bucket_name, scope_name, fts_index, embedding_field, vector, key_context_fields): 
     scope = cluster.bucket(bucket_name).scope(scope_name)
     
@@ -69,7 +69,7 @@ def cb_vector_search(bucket_name, scope_name, fts_index, embedding_field, vector
     VectorSearch.from_vector_query(VectorQuery(embedding_field, vector, num_candidates=2)))
     return scope.search(fts_index, search_req, SearchOptions(limit=13, fields=key_context_fields))
 
-
+# Delete a document
 def delete_doc(bucket, scope, collection, doc_id):
     collection = cluster.bucket(bucket).scope(scope).collection(collection)
     
@@ -82,7 +82,7 @@ def delete_doc(bucket, scope, collection, doc_id):
         
         return None
     
-
+# Flush a collection
 def flush_collection(bucket_name, scope_name, collection_name):
     try:
         result = cluster.query(
@@ -101,7 +101,8 @@ def flush_collection(bucket_name, scope_name, collection_name):
 
     print_success(f"collection `{bucket_name}.{scope_name}.{collection_name}` flushed")
     
-    
+ 
+# subdoc upsert   
 def subdocument_upsert(bucket, scope, collection, doc_id, path, value):
     cb_collection = cluster.bucket(bucket).scope(scope).collection(collection)
     
@@ -115,7 +116,7 @@ def subdocument_upsert(bucket, scope, collection, doc_id, path, value):
         
         return None
     
-
+# subdoc insert
 def subdocument_insert(bucket, scope, collection, doc_id, path, value):
     cb_collection = cluster.bucket(bucket).scope(scope).collection(collection)
     
@@ -129,7 +130,7 @@ def subdocument_insert(bucket, scope, collection, doc_id, path, value):
         
         return None
     
-
+# execute multiple subdoc upserts
 def mutliple_subdoc_upsert(bucket, scope, collection, doc_id, path_value_dict):
     cb_collection = cluster.bucket(bucket).scope(scope).collection(collection)
     
@@ -145,7 +146,7 @@ def mutliple_subdoc_upsert(bucket, scope, collection, doc_id, path_value_dict):
         
         return None
 
-
+# run a query
 def run_query(query, execute=False):
     try:
         result = cluster.query(query).execute() if execute else cluster.query(query)

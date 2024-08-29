@@ -13,11 +13,13 @@ from couchbaseops import cb_vector_search
 
 load_dotenv()
 
-
+# Define the chat model
 chat_openai = ChatOpenAI(model="gpt-4o", temperature=0.05)    
 
+# Define the OpenAI client
 client_openai = OpenAI()
 
+# Define the prompt templates
 prompt_openai = ChatPromptTemplate.from_template("""Answer the following question incorporating the following context:
 <context>
 {context}
@@ -28,6 +30,11 @@ The answer should be precise and professional, and no longer than 5 sentences.
 Question: {input}""")
 
 
+# Create embeddings
+def create_openai_embeddings(input_message):
+    return client_openai.embeddings.create(input = [input_message], model="text-embedding-ada-002").data[0].embedding
+
+# Define the query transform prompt
 query_transform_prompt = ChatPromptTemplate.from_messages(
     [
         MessagesPlaceholder(variable_name="messages"),
@@ -38,17 +45,14 @@ query_transform_prompt = ChatPromptTemplate.from_messages(
     ]
 )
 
-def create_openai_embeddings(input_message):
-    return client_openai.embeddings.create(input = [input_message], model="text-embedding-ada-002").data[0].embedding
-
-
+# Generate the query transformation prompt
 def generate_query_transform_prompt(messages):
     query_transformation_chain = query_transform_prompt | chat_openai
     
     print("generating transformed query...")
     return query_transformation_chain.invoke({"messages": messages}).content 
     
-
+# Generate the document chain
 def generate_document_chain():     
     return create_stuff_documents_chain(chat_openai, prompt_openai)
 
@@ -80,12 +84,15 @@ def multi_model_search(question):
         
     return doc_ids, documents, b64, text
 
-
+# Define the final prompt including images, tables, and texts
 def prompt_func(dict):
+    # concatenate texts
     format_texts = "\n".join(dict["context"]["texts"])
     
+    # get images
     images = dict["context"]["images"]
     
+    # initiate the context dict for the prompt
     content = [
         {
             "type": "text", 
@@ -98,6 +105,7 @@ def prompt_func(dict):
         }
     ]
     
+    # for every image found, append the image to the content
     for image in images:
         content.append(
             {
@@ -108,13 +116,14 @@ def prompt_func(dict):
             }
         )
     
-    
+    # return the content as a HumanMessage
     return [
         HumanMessage(
             content=content
         )
     ]
 
+# Define the chat model
 model = ChatOpenAI(temperature=0, model="gpt-4o", max_tokens=1024)
 
 
