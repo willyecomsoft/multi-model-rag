@@ -2,8 +2,7 @@
 
 Multi-model RAG is, just, cool. So, let's give it a try with Couchbase as a backend.
 
-
-Here's what's happening (credits to this [awesome video](https://www.youtube.com/watch?v=Rg35oYuus-w))
+This demo is an inspiration from Sudarshan Koirala's fantastic [walk-through](https://www.youtube.com/watch?v=-77EvEjuZJY). And at a high level, here's what's happening (credits to this [awesome video](https://www.youtube.com/watch?v=Rg35oYuus-w))
 
 ![image](https://github.com/user-attachments/assets/970fb266-5756-4a8e-ab10-5f5b907da070)
 
