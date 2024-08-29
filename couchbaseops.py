@@ -66,7 +66,7 @@ def cb_vector_search(bucket_name, scope_name, fts_index, embedding_field, vector
     scope = cluster.bucket(bucket_name).scope(scope_name)
     
     search_req = search.SearchRequest.create(search.MatchNoneQuery()).with_vector_search(
-    VectorSearch.from_vector_query(VectorQuery(embedding_field, vector, num_candidates=2)))
+    VectorSearch.from_vector_query(VectorQuery(embedding_field, vector, num_candidates=5)))
     return scope.search(fts_index, search_req, SearchOptions(limit=13, fields=key_context_fields))
 
 # Delete a document
