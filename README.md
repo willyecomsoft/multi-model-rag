@@ -60,25 +60,29 @@ Grab the hostname of Couchbase Node and let's create the backend. Access the Cou
 
 You'll be greeted with the screen below. 
 
-![Couchbase Welcome Screen](static/images/image-1.png)
+![image](https://github.com/user-attachments/assets/2d8fa2d1-7ed1-41e0-bbff-a6907394372a)
+
 
 <br><br>
 
 Let's setup a new cluster. Note down the **Username** and **Password**
 
-![New Cluster Creation](static/images/image-2.png)
+![image](https://github.com/user-attachments/assets/5780c221-de06-4992-8db9-36d6534d3312)
+
 
 <br><br>
 
 Accept the terms and click "**Configure Disk, Memory, Services**" since we don't need all Couchbase services in this demo. 
 
-![alt text](static/images/image-19.png)
+![image](https://github.com/user-attachments/assets/69c14b24-184c-487f-ac21-087cef540b79)
+
 
 <br><br>
 
-Unselect "Analytics", "Eventing", and "Backup". Leave the rest unchanged and click "**Save & Finish**"
+Unselect "Analytics", and "Backup". Leave the rest unchanged and click "**Save & Finish**"
 
-![Couchbase Service Selection](static/images/image-3.png)
+![image](https://github.com/user-attachments/assets/6e76df73-e328-48c3-a2e6-5f65b41361d2)
+
 
 <br><br>
 
