@@ -1,4 +1,8 @@
+<br><br><br>
+
 # Multi-Model RAG with Couchbase
+
+<br><br>
 
 Multi-model RAG is, just, cool. So, let's give it a try with Couchbase as a backend.
 
