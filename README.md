@@ -5,7 +5,8 @@ Multi-model RAG is, just, cool. So, let's give it a try with Couchbase as a back
 
 Here's what's happening (credits to this [awesome video](https://www.youtube.com/watch?v=Rg35oYuus-w))
 
-![image](https://github.com/sillyjason/agentic_customer_service_with_couchbase/assets/54433200/ea02047c-973e-4648-a1b0-5be85acd17b2)
+![image](https://github.com/user-attachments/assets/970fb266-5756-4a8e-ab10-5f5b907da070)
+
 
 
 <br>
@@ -113,8 +114,18 @@ curl -X POST http://<EE_HOSTNAME>:8091/pools/default/buckets/data/scopes/data/co
 
 For us to effectively run vector & full-text search, we will create a search index under "Search" service. 
 
+![image](https://github.com/user-attachments/assets/66c00519-e6e2-4547-98b7-03567924e854)
+
 
 <br><br>
+
+Use the "Import" button on the top-right, paste the index definition JSON from **fts-index.json** under templates/assets, and there you go. 
+
+![image](https://github.com/user-attachments/assets/72a84234-ee9f-4066-9a72-48dc3ec409cf)
+
+
+<br><br>
+
 
 **1.4 Docker Node Setup**
 
