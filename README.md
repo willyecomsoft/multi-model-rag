@@ -158,90 +158,17 @@ docker run --env-file .env -d -p 5002:5002 --name cb-multi-model-rag jasoncaocou
 
 <br><br>
 
-Update the Eventing functions endpoints with the hostname of App Node. 
+
+All good. The container is now running locally on port 5002. We can run the code below to see live logging:
 
 ```
-python3 updateips.py
+docker logs -f cb-multi-model-rag //replace "cb-multi-model-rag" with the actual container name if modified 
 ```
-
->🙌🏻 - Eventing is Couchbase's version of Database Trigger and Lambda functions. It's a versatile and powerful tool to stitch together your data processes and achieve high automation.
 
 
 <br><br>
 
-Set up bucket/scope/collections, fts index, and update the endpoint for the app: 
-
-```
-python3 setupservers.py
-```
-
-<br>
-
-> ❗️Sometimes the event creation might fail and you would see error message like below:
-```
-Error importing function process_refund_ticket: 400 Client Error: Bad Request for url:xxxx. 
-```
-
-<br>
-
-This could be due to not enough time between bucket and eventing creation. In this case, re-run the command and you'll see the success message: 
-```
-Importing function process_refund_ticket...
-Function process_refund_ticket imported successfully
-Importing function process_message... 
-Function process_message imported successfully
-```
-
-<br><br>
-
-Now let's load some sample data. This includes products, orders, product FAQ, and refund policies. We will see the bot reasoning through the query and interact with the data in the ways deemed fit.
-
-```
-python3 reindex.py
-```
-
-<br><br>
-
-You should be able to see this success message.
-
-![alt text](static/images/image-5.png)
-
-<br><br>
-
-You can also check the Couchbase console. There should be data in "**orders**", "**products**" and "**policies**" collections under **"main"."data"** keyspace.
-
-![alt text](static/images/image-6.png)
-
-<br><br>
-
-As a last step, let's create some indexes needed for the bot to run queries later. Go to Couchbase console, select **Query** from the left side menu bar, and run the syntaxes below **individually**: 
-
-```
-create primary index on `main`.`data`.`policies`
-create primary index on `main`.`data`.`products`
-create primary index on `main`.`data`.`orders`
-create primary index on `main`.`data`.`messages`
-create primary index on `main`.`data`.`message_responses`
-create primary index on `main`.`data`.`refund_tickets`
-```
-
-<br><br>
-
->🙌🏻 We're creating primary indexes here which only index the document keys, and this is not a recommended indexing behavior in production environment, where more performant and advanced indexing should be employed instead.
-
-<br><br>
-
-All good. Let's go 
-
-```
-python3 app.py
-```
-
-
-
-<br><br>
-
-## Chat with the Bot 
+## Upload Docs 
 
 <br>
 
