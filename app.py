@@ -89,7 +89,7 @@ def parse_document():
         DELETE FROM `data`.`data`.`data`     
     """
     
-    run_query(query)
+    run_query(query, True)
     
     # Ensure the "content" directory exists
     print_bold(f"getting payload: {request.files}")
