@@ -127,6 +127,10 @@ Use the "Import" button on the top-right, paste the index definition JSON from *
 
 ![image](https://github.com/user-attachments/assets/72a84234-ee9f-4066-9a72-48dc3ec409cf)
 
+<br><br>
+
+Click "Create Index" at bottom left to finish creation process.
+![image](https://github.com/user-attachments/assets/24e1854f-db22-4c78-aa3b-dd89c5552774)
 
 <br><br>
 
@@ -165,6 +169,10 @@ All good. The container is now running locally on port 5002. We can run the code
 docker logs -f cb-multi-model-rag //replace "cb-multi-model-rag" with the actual container name if modified 
 ```
 
+<br><br>
+
+<img width="1088" alt="image" src="https://github.com/user-attachments/assets/95d20245-c4fb-4d2a-a75b-b455e58c5205">
+
 
 <br><br>
 
@@ -172,154 +180,61 @@ docker logs -f cb-multi-model-rag //replace "cb-multi-model-rag" with the actual
 
 <br>
 
-On your browser, access this link below. You should see the empty chat screen.
+On your browser, access this link below to upload a PFD to chat with. Ideally you'll want to select a document that has texts, tables, and images. To preserve your token consumption, avoid too large documents.
 
-> {App_node_hostname}:5001
+> localhost:5002/upload
 
-![image](https://github.com/user-attachments/assets/8eece557-94dd-411c-be39-86e5d9899380)
-
-
-
-<br><br>
-
-**Ask Product Questions**
+I'll be using the [NoSQL Benchmark Report 2023](https://www.couchbase.com/content/capella/altoros-report-eval-nosql-dbaas) produced by Altoros. To decrease my token consumption throughout the demo, I've truncated the document to only include section 4.1, ie., summary for update-heavy workloads, which will be uploaded here. You can find both documents under directory **templates/assets**.  
 
 <br>
 
-Let's ask some **product related** questions: 
-
-```
-I bought a vacuum and I really liked it! Do you have any washing machines to recommend as well?
-```
-
-![image](https://github.com/user-attachments/assets/db9e2dac-6f28-45f8-93f2-95de1bf2c9d5)
+![image](https://github.com/user-attachments/assets/c1bcf4a4-4416-4be3-92db-c3c15ed83acd)
 
 
-Under the hood the bot is sending **SQL queries** to Couchbase to fetch washing machine product info. 
+<br><br>
 
-<br><br><br>
 
-Let's ask questions that's trickier than SQL query. Refresh the page, and ask another question.
-
-```
-I bought a washing machine and it's starting to smell really bad recently. What should I do? 
-```
+**Check Upload Result**
 
 <br>
 
-![image](https://github.com/user-attachments/assets/568819a3-b117-4de3-b58b-3a9207b13b76)
+We're using [Unstructured](https://github.com/Unstructured-IO/unstructured) library for parsing the document and it takes a while to finish. After ~2 minutes, go to Couchbase console, under "Documents", select keyspace **"data"."data"."data"**. There you'll have the parsed documents. Logic here is to store text by a predefined logics, while LLM is used to give summary of images and tables found. All 3 types of information are then stored in Couchbase, along with their embeddings. 
+
+![image](https://github.com/user-attachments/assets/be71380c-cc25-4491-8fd3-65433f6dce4c)
 
 
 <br><br>
 
-Other than recommending some products, it's actually looking into the product manuals. Semantic Search and RAG is in play here supported by Couchbase Vector Search. 
+How do we know which how many images, texts chunks, and tables are there? You may notice each document has a **"category"** field, but a structured way to query is preferred. let's go to Query tab. 
 
-<br><br><br>
-
-Let's refresh the page again, and try asking some refund queries: 
-
-```
-I bought a washing machine and my order is SO005. It stopped working. I'd like to have a refund please.
-```
-
-![image](https://github.com/user-attachments/assets/f486be99-cd08-4648-9a5d-46a6955060fb)
-
-
-<br><br><br>
-
-The bot is able to deflect invalid refund requests by looking into refund policy, doing some maths and making a sound judgement calls. Now what happens if the refund request is valid? 
-
-```
-I bought a vacuum and my order is SO005. It stopped working. I'd like to have a refund please.
-```
+Select "data"."data" context from the top right of the Query Editor, enter the familiar SQL query below, and there you go.
 
 <br>
 
-![image](https://github.com/user-attachments/assets/b7a6cb7a-9dee-4b65-9429-722d98346f7f)
-
-
-<br><br>
-
-This time the refund request is deemed valid since washing machine and vacuum have different refund period (you can check under **dataset/faq.txt**, which is indexed into Couchbase). Note the bot even created a refund ticket, which can be found under "main"."data"."refund_tickets" collection in Couchbase.
-
-![Refund Tickets Collection](static/images/image-13.png)
+```
+SELECT category, COUNT(*) AS count
+FROM data
+GROUP BY category;
+```
 
 <br><br>
 
+![image](https://github.com/user-attachments/assets/30f9c0d6-9c4b-4190-a987-6cdd8f379c27)
 
-## Beyond the Question Answering
+<br><br>
 
-Realistically, the customer service process doesn't end with the initial response provided. A common example is follow-ups on the refund ticket. Let's put on the hat of a Refund Manager and look at the valid requests created by the bot. Access the Refund_Tickets page via: 
-
-> {App_node_hostname}:5001/tickets 
+If you feel like gaining a bit more insights on your images, run more queries to examine your data: 
 
 <br>
 
-![alt text](static/images/image-21.png)
-
-Logically, the refund admin looks at the information here, checks out details of everything, and makes a sound judgement on whether the bot-deemed-qualified refund is indeed valid, and the refund amount.
-
-Of course another LLM agent can be set up for this task too, but let’s agree on this: in 2024, it’s still a good call to involve human beings in such decision makings. Let’s approve this refund ticket.
-
-You’ll see a success message. Refresh the page. The update is reflected.
-
-Go back to main page. Another message is sent to the customer on the good news of the refund ticket. Again, [Couchbase Eventing](https://www.couchbase.com/products/eventing/) doing its real time process stitching. 
+![image](https://github.com/user-attachments/assets/c184d4ae-eb38-41d1-aa2f-323c80a12913)
 
 
-![image](https://github.com/user-attachments/assets/5bef29ad-954d-4d47-877e-3daf70e0b84c)
+**Let's ask some questions!**
 
+Go to **localhost:5002** on your browser, and let's have some fun! 
 
-<br><br>
+![image](https://github.com/user-attachments/assets/20627287-df47-42b5-a61c-f85884c94609)
 
-Let’s go to “Customer Message” tab. 
-
-> {App_node_hostname}:5001/messages 
-
-<br>
-
-![alt text](static/images/image-23.png)
-
-
-Note each message has been labelled a sentiment, and a category. We’re leveraging LLM to apply metadata here, but again, Eventing is making this automation smooth as butter.
-
-<br><br>
-
-## Traceability 
-
-We all know LLM cannot be fully deterministic at the moment. That is why, if we entrust the reasoning process to a bot, we need to have full visibility on its reasoning process. 
-
-Note how every response from the bot has a "trace" link provided. Let's click the link, which will take us to the LangSmith page where this reasoning process is broken down to details.
-
-<br>
-
-![image](https://github.com/user-attachments/assets/40a0d263-c74c-4070-aa96-99421f90ed22)
-
-
-<br><br>
-
-With first-time access, you'll be prompted to login. Use the same credentials for which you created the LangChain API key. 
-
-![alt text](static/images/image-24.png)
-
-<br><br>
-
-You should be able to see something like this:
-
-![alt text](static/images/image-25.png)
-
-
-LangSmith is an awesome tool for understanding and troubleshooting the agentic process. Note in our workflow, we have define 5 agents: 
-
-- General-support agent that gathers info of order and products mentioned, and generate an initial response 
-- Recommendation agent that searches and recommends products
-- Product_fix agent that searches the FAQ library for any product-related queries 
-- Refund agent that reasons through whether refund requests, if raised, is valid 
-- And a Finalizer agent that takes all info gathered previously, and generate a professional and relevant response based on customer query. 
-
-
-<br><br>
-
-Drill into any step during the reasoning chain, look at the input/output. I find it amazing at even optimizing my workflows!
-
-![alt text](static/images/image-26.png)
+Notice under "Source Document Found:", we're given the source of information fed to the LLM. Information of type image, text, or table are given separate icons for indication. Click each icon to expand, and slice & dice further!
 
