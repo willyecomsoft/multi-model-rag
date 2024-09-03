@@ -9,7 +9,7 @@ from couchbase.auth import PasswordAuthenticator
 from datetime import timedelta
 import os 
 import couchbase.subdocument as SD
-from sharedfunctions.print import print_success, print_error
+from sharedfunctions.print import print_success, print_error, print_bold
 import sys
 
 
