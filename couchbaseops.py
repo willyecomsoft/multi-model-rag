@@ -10,6 +10,7 @@ from datetime import timedelta
 import os 
 import couchbase.subdocument as SD
 from sharedfunctions.print import print_success
+import sys
 
 
 load_dotenv()
@@ -31,7 +32,7 @@ def get_doc(bucket, scope, collection, doc_id):
         return result.content_as[dict]
         
     except Exception as e:
-        print("exception:", e)
+        print("exception:", e, file=sys.stderr)
         
         return None
 
@@ -48,12 +49,12 @@ def insert_doc(bucket, scope, collection, doc, doc_id=None):
             doc
         )
         
-        print(f"Insert {collection} successful: {docid}")
+        print(f"Insert {collection} successful: {docid}", file=sys.stderr)
         
         return docid
         
     except Exception as e:
-        print("exception:", e)
+        print("exception:", e, file=sys.stderr)
         
         return None 
 
@@ -75,10 +76,10 @@ def delete_doc(bucket, scope, collection, doc_id):
     
     try:
         collection.remove(doc_id)
-        print("Deleted doc with id:", doc_id)
+        print("Deleted doc with id:", doc_id, file=sys.stderr)
         
     except Exception as e:
-        print("exception:", e)
+        print("exception:", e, file=sys.stderr)
         
         return None
     
@@ -97,7 +98,7 @@ def flush_collection(bucket_name, scope_name, collection_name):
             delete_doc(bucket_name, scope_name, collection_name, doc_id)
             
     except Exception as e:
-        print(f"An error occurred: {e}")
+        print(f"An error occurred: {e}", file=sys.stderr)
 
     print_success(f"collection `{bucket_name}.{scope_name}.{collection_name}` flushed")
     
@@ -109,10 +110,10 @@ def subdocument_upsert(bucket, scope, collection, doc_id, path, value):
     try:
         cb_collection.mutate_in(doc_id, [SD.upsert(path, value)])
         
-        print(f"Subdocument upsert successful for {doc_id}, collection {collection}, path {path} and value {value}")
+        print(f"Subdocument upsert successful for {doc_id}, collection {collection}, path {path} and value {value}", file=sys.stderr)
         
     except Exception as e:
-        print("exception with subdoc upsert:", e)
+        print("exception with subdoc upsert:", e, file=sys.stderr)
         
         return None
     
@@ -123,10 +124,10 @@ def subdocument_insert(bucket, scope, collection, doc_id, path, value):
     try:
         cb_collection.mutate_in(doc_id, [SD.insert(path, value)])
         
-        print(f"Subdocument insert successful for {doc_id}, collection {collection}, path {path} and value {value}")
+        print(f"Subdocument insert successful for {doc_id}, collection {collection}, path {path} and value {value}", file=sys.stderr)
         
     except Exception as e:
-        print("exception with subdoc insert:", e)
+        print("exception with subdoc insert:", e, file=sys.stderr)
         
         return None
     
@@ -139,10 +140,10 @@ def mutliple_subdoc_upsert(bucket, scope, collection, doc_id, path_value_dict):
         
         cb_collection.mutate_in(doc_id, operations)
         
-        print(f"Multiple subdocument upsert successful for {doc_id}, collection {collection}, path_value_dict {path_value_dict}")
+        print(f"Multiple subdocument upsert successful for {doc_id}, collection {collection}, path_value_dict {path_value_dict}", file=sys.stderr)
         
     except Exception as e:
-        print("exception:", e)
+        print("exception:", e, file=sys.stderr)
         
         return None
 
@@ -150,11 +151,11 @@ def mutliple_subdoc_upsert(bucket, scope, collection, doc_id, path_value_dict):
 def run_query(query, execute=False):
     try:
         result = cluster.query(query).execute() if execute else cluster.query(query)
-        print(f"Query successful: {query}, result: {result}")
+        print(f"Query successful: {query}, result: {result}", file=sys.stderr)
         return result
         
     except Exception as e:
-        print("exception:", e)
+        print("exception:", e, file=sys.stderr)
         
         return None
     

@@ -10,7 +10,7 @@ import uuid
 from llm import create_openai_embeddings
 from couchbaseops import insert_doc
 from sharedfunctions.print import print_bold
-
+import sys
 
 load_dotenv()
 
@@ -30,7 +30,7 @@ def partition_document():
         combine_text_under_n_chars=2000,
         image_output_dir_path=path,
     )
-    print(f"got {len(raw_pdf_elements)} elements")
+    print(f"got {len(raw_pdf_elements)} elements", file=sys.stderr)
 
     tables = []
     texts = []
