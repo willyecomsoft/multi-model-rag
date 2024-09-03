@@ -9,7 +9,7 @@ from couchbase.auth import PasswordAuthenticator
 from datetime import timedelta
 import os 
 import couchbase.subdocument as SD
-from sharedfunctions.print import print_success
+from sharedfunctions.print import print_success, print_error
 import sys
 
 
@@ -113,8 +113,8 @@ def subdocument_upsert(bucket, scope, collection, doc_id, path, value):
         print_bold(f"Subdocument upsert successful for {doc_id}, collection {collection}, path {path} and value {value}")
         
     except Exception as e:
-=        print_error(f"exception with subdoc upsert: {e}")
-        
+        print_error(f"exception with subdoc upsert: {e}")
+
         return None
     
 # subdoc insert
@@ -143,8 +143,8 @@ def mutliple_subdoc_upsert(bucket, scope, collection, doc_id, path_value_dict):
         print_bold(f"Multiple subdocument upsert successful for {doc_id}, collection {collection}, path_value_dict {path_value_dict}")
         
     except Exception as e:
-         print_error(f"An error occurred: {e}")
-        
+        print_error(f"An error occurred: {e}")
+
         return None
 
 # run a query
@@ -155,7 +155,7 @@ def run_query(query, execute=False):
         return result
         
     except Exception as e:
-         print_error(f"An error occurred: {e}")
+        print_error(f"An error occurred: {e}")
         
         return None
     
