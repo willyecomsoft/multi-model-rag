@@ -10,6 +10,7 @@ from langchain.schema.messages import HumanMessage
 from base64 import b64decode
 from couchbaseops import cb_vector_search
 import sys
+from sharedfunctions.print import print_bold
 
 load_dotenv()
 
@@ -49,7 +50,7 @@ query_transform_prompt = ChatPromptTemplate.from_messages(
 def generate_query_transform_prompt(messages):
     query_transformation_chain = query_transform_prompt | chat_openai
     
-    print("generating transformed query...", file=sys.stderr)
+    print_bold("generating transformed query...")
     return query_transformation_chain.invoke({"messages": messages}).content 
     
 # Generate the document chain

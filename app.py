@@ -49,7 +49,7 @@ def run_multi_model_search(question_data):
     
     # generate new query
     new_query = generate_query_transform_prompt(demo_ephemeral_chat_history.messages)
-    print(f"Generated query: {new_query}", file=sys.stderr)
+    print_bold(f"Generated query: {new_query}")
     
     # run multi model search
     doc_ids, documents, b64, text = multi_model_search(new_query)
@@ -103,28 +103,27 @@ def parse_document():
     run_query(query, True)
     
     print_bold(f"getting payload: {request.files}")
-    # # Ensure the "content" directory exists
-    # print_bold(f"getting payload: {request.files}")
-    # content_dir = os.path.join(os.getcwd(), 'content')
-    # os.makedirs(content_dir, exist_ok=True)
+    # Ensure the "content" directory exists
+    print_bold(f"getting payload: {request.files}")
+    content_dir = os.path.join(os.getcwd(), 'content')
+    os.makedirs(content_dir, exist_ok=True)
 
-    # # Get the file from the request
-    # file = request.files['file']
+    # Get the file from the request
+    file = request.files['file']
 
-    # # Define the path to save the file
-    # file_name = 'document.pdf'
-    # save_path = os.path.join(content_dir, file_name)
+    # Define the path to save the file
+    file_name = 'document.pdf'
+    save_path = os.path.join(content_dir, file_name)
     
-    # # Save the file to the "content" directory
-    # file.save(save_path)
-    # print_success('File saved')
+    # Save the file to the "content" directory
+    file.save(save_path)
+    print_success(f"File saved to {save_path}")
     
     # # start partitioning
-    # partition_document()
+    partition_document()
     
-    # return jsonify({"message": f"File saved to {save_path}"}), 200
-    return jsonify({"message": f"File saved to ..."}), 200
-    
+    return jsonify({"message": f"File saved to {save_path}"}), 200
+
     
 # Run the app
 if __name__ == '__main__':
