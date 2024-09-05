@@ -61,7 +61,7 @@ def partition_document():
     text_summaries = texts # Skip it
 
     # Apply to tables
-#     table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
+    table_summaries = summarize_chain.batch(tables, {"max_concurrency": 5})
 
     # Image summarization
     def encode_image(image_path):
@@ -101,27 +101,27 @@ def partition_document():
     prompt = "Describe the image in detail. Be specific about graphs, such as bar plots."
 
     path_figures = "figures/"
-#
-#     # Read images, encode to base64 strings
-#     for img_file in sorted(os.listdir(path_figures)):
-#         if img_file.endswith('.jpg'):
-#             img_path = os.path.join(path_figures, img_file)
-#             base64_image = encode_image(img_path)
-#             img_base64_list.append(base64_image)
-#             image_summaries.append(image_summarize(base64_image,prompt))
-#
-#
+
+    # Read images, encode to base64 strings
+    for img_file in sorted(os.listdir(path_figures)):
+        if img_file.endswith('.jpg'):
+            img_path = os.path.join(path_figures, img_file)
+            base64_image = encode_image(img_path)
+            img_base64_list.append(base64_image)
+            image_summaries.append(image_summarize(base64_image,prompt))
+
+
     # Insert into couchbase
     def insert_into_couchbase(docs, category, ids=None):
         print_bold(f"Inserting {category} into couchbase")
 
         ''' Inserting into couchbase '''
         for doc in docs:
-#             embeddings = create_openai_embeddings(doc)
+            embeddings = create_openai_embeddings(doc)
             doc_to_insert = {
                 "text": doc,
-                "category": category
-#                 ,"embeddings": embeddings
+                "category": category,
+                "embeddings": embeddings
             }
 
             if category == "image_summary":
@@ -132,7 +132,7 @@ def partition_document():
             #find the index of doc within docs, and use it to get the corresponding id
             doc_id = ids[docs.index(doc)] if ids else str(uuid.uuid4())
             insert_doc("data", "data", "data", doc_to_insert, doc_id)
-#
+
     insert_into_couchbase(text_summaries,  "text_summary")
-#     insert_into_couchbase(image_summaries, "image_summary")
-#     insert_into_couchbase(table_summaries, "table_summary")
+    insert_into_couchbase(image_summaries, "image_summary")
+    insert_into_couchbase(table_summaries, "table_summary")

@@ -119,7 +119,7 @@ def parse_document():
     file.save(save_path)
     print_success(f"File saved to {save_path}")
     
-    # # start partitioning
+    # start partitioning
     partition_document()
     
     return jsonify({"message": f"File saved to {save_path}"}), 200
