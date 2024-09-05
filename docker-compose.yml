@@ -1,0 +1,26 @@
+services:
+  ollama:
+    hostname: ollama
+    container_name: ollama
+    image: ollama/ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama-local:/root/.ollama
+
+  openWebUI:
+    container_name: open-webui
+    image: ghcr.io/open-webui/open-webui:main
+    restart: always
+    depends_on:
+      - ollama
+    ports:
+      - 3000:8080
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - open-webui:/app/backend/data
+
+volumes:
+  ollama-local:
+  open-webui:
