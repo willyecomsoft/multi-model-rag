@@ -17,4 +17,4 @@ prompt = ChatPromptTemplate.from_template(
 
 chain = prompt | llm
 
-print(chain.invoke({"message": "苦瓜"}))
+print(chain.invoke({"message": "咖啡"}))

@@ -23,6 +23,7 @@ try:
     print_success("Couchbase setup complete")
 except Exception as e:
     print_error(f"An error occurred: {e}")
+    raise
 
 
 # CRUD operations
