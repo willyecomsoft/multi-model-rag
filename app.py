@@ -9,7 +9,6 @@ import os
 from sharedfunctions.print import print_error, print_success, print_bold
 from parsedoc import partition_document
 from couchbaseops import run_query
-import sys
 
 
 # Load the environment variables

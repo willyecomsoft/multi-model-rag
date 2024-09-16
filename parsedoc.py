@@ -38,11 +38,9 @@ def partition_document():
 
     for element in raw_pdf_elements:
         if "unstructured.documents.elements.Table" in str(type(element)):
-            table_string = str(element)
-            tables.append(table_string)
+            tables.append(str(element))
         elif "unstructured.documents.elements.CompositeElement" in str(type(element)):
-            text_string = str(element)
-            texts.append(text_string)
+            texts.append(str(element))
 
 
     # Prompt
