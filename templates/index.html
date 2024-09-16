@@ -165,6 +165,8 @@
             const icon = doc.category === "image" ? "🎑" : 
                          doc.category === "text" ? "📝" : "📊";
 
+            const text = doc.category === "text" ? doc.text : ''
+
             const tempContainer = window.document.createElement('div');
             tempContainer.innerHTML = `<div class="document-box"><p class="document-category">${icon}</p></div>`;
             const documentBox = tempContainer.firstElementChild;
@@ -172,10 +174,10 @@
 
             documentBox.addEventListener('click', () => {
                 if (documentBox.dataset.status === 'collapsed') {
-                    documentBox.dataset.status = 'expanded';
+                    documentBox.dataset.status = 'expanded';                    
                     documentBox.innerHTML = `
                         <p class="document-category">${icon}</p>
-                        <div class="text-content">${doc.text}</div>
+                        <div class="text-content">${text}</div>
                         <div class="category">Category: ${doc.category}</div>
                         <div class="content">${getContentHTML(doc)}</div>
                     `;
@@ -189,9 +191,9 @@
         }
 
         function getContentHTML(document) {
-            if (document.category === 'image_summary') {
+            if (document.category === 'image') {
                 return `<div class="image-content"><img src="data:image/png;base64,${document.content}" alt="Image"></div>`;
-            } else if (document.category === 'table_summary') {
+            } else if (document.category === 'table') {
                 const rows = document.content.split('\n').map(row => {
                     const cells = row.split(',').map(cell => `<td>${cell}</td>`).join('');
                     return `<tr>${cells}</tr>`;
@@ -199,7 +201,7 @@
                 return `<div class="table-content"><table>${rows}</table></div>`;
                 
             } else {
-                return `<div class="text-content">${document.content}</div>`;
+                return `<div class="text-content"></div>`;
             }
         }
 

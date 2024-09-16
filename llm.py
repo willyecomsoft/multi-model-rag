@@ -75,13 +75,9 @@ def multi_model_search(question):
         documents.append(fields)
         
         category = fields["category"]
-        content = fields["text"] if category == "text" else fields["content"]
-        
-        try: 
-            b64decode(content)
-            b64.append(content)
-        except Exception as e:
-            text.append(content)
+
+        if category == "image":
+            b64.append(fields["content"])
         
     return doc_ids, documents, b64, text
 
