@@ -130,7 +130,7 @@ def partition_document():
             #find the index of doc within docs, and use it to get the corresponding id
             doc_id = ids[docs.index(doc)] if ids else str(uuid.uuid4())
             insert_doc("data", "data", "data", doc_to_insert, doc_id)
-#
+
     insert_into_couchbase(text_summaries,  "text_summary")
     insert_into_couchbase(image_summaries, "image_summary")
     insert_into_couchbase(table_summaries, "table_summary")
