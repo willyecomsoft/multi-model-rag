@@ -7,9 +7,10 @@ import time
 from langchain.schema.runnable import RunnableLambda
 import os 
 from sharedfunctions.print import print_error, print_success, print_bold
-from parsedoc import partition_document
-from couchbaseops import run_query
+from parsedoc import partition_document, do_embedding
+from couchbaseops import run_query, insert_doc, get_doc, subdocument_upsert
 import sys
+from datetime import datetime
 
 
 # Load the environment variables
@@ -90,21 +91,33 @@ def run_multi_model_search(question_data):
     #6. add bot message, both locally and to couchbase
     demo_ephemeral_chat_history.add_ai_message(message_string)
 
+@app.route('/embedding', methods=['GET'])
+def embedding():
+    doc_id = request.args.get('id')
 
-# Parse the document from the REST call
+    do_embedding(doc_id)
+
+    return doc_id
+
+
 @app.route('/parse_document', methods=['POST'])
 def parse_document():
+    data = request.get_json()
+
+    id = data.get("id")
+    path = data.get("path")
+
+    partition_document(id, path)
+
+    return jsonify({
+        "message": "File parsed"
+    }), 200
+
+# Parse the document from the REST call
+@app.route('/upload_document', methods=['POST'])
+def upload_document():
     
-    # Delete existing data 
-    query = """
-        DELETE FROM `data`.`data`.`data`     
-    """
-    
-    run_query(query, True)
-    
-    print_bold(f"getting payload: {request.files}")
     # Ensure the "content" directory exists
-    print_bold(f"getting payload: {request.files}")
     content_dir = os.path.join(os.getcwd(), 'content')
     os.makedirs(content_dir, exist_ok=True)
 
@@ -112,15 +125,21 @@ def parse_document():
     file = request.files['file']
 
     # Define the path to save the file
-    file_name = 'document.pdf'
+    file_name = file.filename
     save_path = os.path.join(content_dir, file_name)
     
     # Save the file to the "content" directory
     file.save(save_path)
     print_success(f"File saved to {save_path}")
-    
-    # # start partitioning
-    partition_document()
+
+    doc_to_insert = {
+        "name": file_name,
+        "type": file.content_type,
+        "path": save_path,
+        "upload_at": datetime.now().timestamp()
+    }
+
+    insert_doc('data', 'uat', 'meta', doc_to_insert)
     
     return jsonify({"message": f"File saved to {save_path}"}), 200
 

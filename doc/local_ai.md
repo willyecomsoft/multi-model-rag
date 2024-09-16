@@ -7,19 +7,19 @@ docker compose up -d
 
 check http://localhost:11434
 
-![ollama](./images/ollama.png)
+![ollama](/static/images/ollama.png)
 
 <br>
 
 http://localhost:3000/auth
 
 register user
-![open_webui_reg.png](./images/open_webui_reg.png)
+![open_webui_reg.png](/static/images/open_webui_reg.png)
 
 <br>
 
 download model
-![open_webui_model.png](./images/open_webui_model.png)
+![open_webui_model.png](/static/images/open_webui_model.png)
 
 or run in ollama container without open webui
 

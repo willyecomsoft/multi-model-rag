@@ -21,7 +21,11 @@ python app.py
 
 <br>
 
-![app.png](images/app.png)
+install poppler-utils
+
+<br>
+
+![app.png](/static/images/app.png)
 
 ### 2. docker
 

@@ -22,7 +22,7 @@ cluster.wait_until_ready(timedelta(seconds=5))
 print_success("Couchbase setup complete")
 
 try:
-    scope = cluster.bucket("data").scope("data")
+    scope = cluster.bucket("data").scope("uat")
     
     search_req = search.SearchRequest.create(search.MatchNoneQuery()).with_vector_search(
     VectorSearch.from_vector_query(VectorQuery("embeddings", embedding, num_candidates=5)))

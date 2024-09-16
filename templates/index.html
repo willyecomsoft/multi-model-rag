@@ -162,8 +162,8 @@
         var lastTimestamp = null;
 
         function createDocumentBox(doc, index) {
-            const icon = doc.category === "image_summary" ? "🎑" : 
-                         doc.category === "text_summary" ? "📝" : "📊";
+            const icon = doc.category === "image" ? "🎑" : 
+                         doc.category === "text" ? "📝" : "📊";
 
             const tempContainer = window.document.createElement('div');
             tempContainer.innerHTML = `<div class="document-box"><p class="document-category">${icon}</p></div>`;

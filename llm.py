@@ -61,7 +61,7 @@ def generate_document_chain():
 # run cb vector search
 def multi_model_search(question):
     question_vector = create_openai_embeddings(question)
-    result = cb_vector_search("data", "data", "search-data", "embeddings", question_vector, ['category', 'content', 'text'])
+    result = cb_vector_search("data", "uat", "search-data", "embeddings", question_vector, ['category', 'content', 'text'])
 
     b64 = []
     text = []
@@ -75,7 +75,7 @@ def multi_model_search(question):
         documents.append(fields)
         
         category = fields["category"]
-        content = fields["text"] if category == "text_summary" else fields["content"]
+        content = fields["text"] if category == "text" else fields["content"]
         
         try: 
             b64decode(content)

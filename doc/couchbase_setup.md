@@ -26,8 +26,8 @@ http://localhost:8091/
 
 |       |   |
 |  ----  | ----  |
-|![couchbase_new_cluster](./images/couchbase_new_cluster.png) | ![couchbase_cluster_info](./images/couchbase_cluster_info.png)|
-|![couchbase_cluster_config](./images/couchbase_cluster_config.png)|![couchbase_cluster_terms](./images/couchbase_cluster_terms.png)
+|![couchbase_new_cluster](/static/images/couchbase_new_cluster.png) | ![couchbase_cluster_info](/static/images/couchbase_cluster_info.png)|
+|![couchbase_cluster_config](/static/images/couchbase_cluster_config.png)|![couchbase_cluster_terms](/static/images/couchbase_cluster_terms.png)
 |
 
 ## project setup
@@ -49,7 +49,7 @@ curl -X POST http://<EE_HOSTNAME>:8091/pools/default/buckets \
 ```
 
 same as
-![couchbase_create_bucket](./images/couchbase_create_bucket.png)
+![couchbase_create_bucket](/static/images/couchbase_create_bucket.png)
 
 <br>
 
@@ -63,10 +63,17 @@ curl -X POST http://<EE_HOSTNAME>:8091/pools/default/buckets/data/scopes \
 same as
 |||
 |---|---|
-|![couchbase_create_scope1](./images/couchbase_create_scope1.png)|![couchbase_create_scope2](./images/couchbase_create_scope2.png)|
+|![couchbase_create_scope1](/static/images/couchbase_create_scope1.png)|![couchbase_create_scope2](/static/images/couchbase_create_scope2.png)|
 
 
 **3. create collection "data", "meta", "event" under "data" scope**
+
+- meta: store file path and other metadata
+- data: store file content, embedding
+- event: store event data, used by couchbase
+
+<br>
+
 ```
 curl -X POST http://<EE_HOSTNAME>:8091/pools/default/buckets/data/scopes/uat/collections \
      -u <CB_USERNAME>:<CB_PASSWORD> \
