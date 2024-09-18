@@ -267,4 +267,144 @@ python store_embedding.py
 
 ## exercise 6 - vector search & full-text search
 
-**full-text search**
+### 6.1. full-text search
+**create index**
+>Search -> QUICK INDEX
+
+![ex6_quick_index](/static/images/exercise/ex6_quick_index.png)
+
+<br>
+
+Index Name: **test-fts**<br>
+Keyspace: data.test.data
+
+![ex6_fts1](/static/images/exercise/ex6_fts1.png)
+
+>select filed -> checkbox -> ADD
+
+![ex6_fts_f1](/static/images/exercise/ex6_fts_f1.png)
+|||
+|---|---|
+|![ex6_fts_f2](/static/images/exercise/ex6_fts_f2.png)|![ex6_fts_f3](/static/images/exercise/ex6_fts_f3.png)|
+
+embedding
+
+![ex6_fts_emb](/static/images/exercise/ex6_fts_emb.png)
+
+
+result
+![ex6_fts_create](/static/images/exercise/ex6_fts_create.png)
+![ex6_fts_create_result](/static/images/exercise/ex6_fts_create_result.png)
+
+<br>
+
+**basic search**
+![ex6_fts_search1](/static/images/exercise/ex6_fts_search1.png)
+![ex6_fts_search2](/static/images/exercise/ex6_fts_search2.png)
+
+**search with sdk**
+```
+vim fts.py
+```
+
+```
+from couchbase.cluster import Cluster
+from couchbase.options import ClusterOptions, SearchOptions
+from couchbase.auth import PasswordAuthenticator
+from couchbase.exceptions import CouchbaseException
+import couchbase.search as search
+from datetime import timedelta
+import os 
+from dotenv import load_dotenv
+```
+
+```
+load_dotenv()
+
+auth = PasswordAuthenticator(os.getenv("CB_USERNAME"), os.getenv("CB_PASSWORD"))
+cluster = Cluster(f'couchbase://{os.getenv("EE_HOSTNAME")}', ClusterOptions(auth))
+cluster.wait_until_ready(timedelta(seconds=5))
+print("Couchbase setup complete")
+```
+
+```
+try:
+
+    result = cluster.search_query('data.test.test-fts', search.QueryStringQuery('test*'), SearchOptions(limit=13, fields=['name', 'type', 'content']))
+
+    for row in result.rows():
+        print(f'Found row: {row}')
+
+    print(f'Reported total rows: {result.metadata().metrics().total_rows()}')
+
+except CouchbaseException as ex:
+    import traceback
+    traceback.print_exc()
+```
+
+**run**
+```
+python fts.py
+```
+
+![ex6_fts_run](/static/images/exercise/ex6_fts_run.png)
+
+
+### 6.2. search embedding
+
+```
+vim search_embedding.py
+```
+
+```
+from embedding import create_embedding
+from sharedfunctions.print import print_success, print_error, print_bold
+from dotenv import load_dotenv
+from couchbase.cluster import Cluster
+from couchbase.options import ClusterOptions
+from couchbase.auth import PasswordAuthenticator
+import os 
+from datetime import timedelta
+import couchbase.search as search
+from couchbase.vector_search import VectorQuery, VectorSearch
+from couchbase.options import SearchOptions
+
+```
+
+```
+load_dotenv()
+
+auth = PasswordAuthenticator(os.getenv("CB_USERNAME"), os.getenv("CB_PASSWORD"))
+cluster = Cluster(f'couchbase://{os.getenv("EE_HOSTNAME")}', ClusterOptions(auth))
+cluster.wait_until_ready(timedelta(seconds=5))
+print_success("Couchbase setup complete")
+```
+
+**embedding question**
+```
+question = "what is aaabbbccc ?"
+
+embedding = create_embedding(question)
+```
+
+```
+try:
+    scope = cluster.bucket("data").scope("test")
+    
+    search_req = search.SearchRequest.create(search.MatchNoneQuery()).with_vector_search(
+    VectorSearch.from_vector_query(VectorQuery("embeddings", embedding, num_candidates=5)))
+    result = scope.search("test-fts", search_req, SearchOptions(limit=13, fields=['name', 'content', 'type']))
+    for row in result.rows():
+        print("Found row: {}".format(row))
+    print("Reported total rows: {}".format(
+        result.metadata().metrics().total_rows()))
+
+except Exception as e:
+    print_error(f"An error occurred: {e}")
+```
+
+**run**
+```
+python search_embedding.py
+```
+![ex6.2_run](/static/images/exercise/ex6.2_run.png)
