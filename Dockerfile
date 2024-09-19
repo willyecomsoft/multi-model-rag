@@ -5,8 +5,11 @@ RUN apt-get update && apt-get install -y \
     poppler-utils \
     libgl1-mesa-glx \
     libglib2.0-0 \
+    ssh \
     vim \
     tesseract-ocr
+
+RUN mkdir /run/sshd
 
 # Set the working directory
 WORKDIR /app
@@ -23,5 +26,19 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
 
-# Run the application
-CMD ["flask", "run"]
+RUN useradd -m workshop && \
+    echo "workshop:password" | chpasswd
+    
+RUN chown -R workshop:workshop /app
+
+EXPOSE 22
+
+# Create start script
+RUN echo '#!/bin/bash' > /start.sh && \
+    echo '/usr/sbin/sshd -D &' >> /start.sh && \
+    echo 'su workshop' >> /start.sh && \
+    echo 'flask run' >> /start.sh && \
+    chmod +x /start.sh
+
+# Use the start script as the entry point
+CMD ["/start.sh"]
