@@ -14,7 +14,7 @@ check http://localhost:11434
 http://localhost:3000/auth
 
 register user
-![open_webui_reg.png](/static/images/open_webui_reg.png)
+![open_webui_register.png](/static/images/open_webui_register.png)
 
 <br>
 

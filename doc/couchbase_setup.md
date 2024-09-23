@@ -14,7 +14,7 @@ sudo systemctl start couchbase-server
 
 **docker**
 ```
-docker run -d --name couchbase -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase:enterprise-7.6.1
+docker run -d --name couchbase -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase:enterprise-7.6.2
 ```
 
 

@@ -1,48 +1,49 @@
 [
-    {
-      "appcode": "function OnUpdate(doc, meta) {\n    \n    let new_doc = doc\n    let eventing = new_doc.eventing ?? {}\n    let embeddings = doc.embeddings\n    \n    if ( eventing.success || embeddings ) {\n        return\n    }\n    \n    DoEmbedding(doc, meta)\n}\n\nfunction OnDelete(meta, options) {\n    log(\"Doc deleted/expired\", meta.id);\n}\n\nfunction DoEmbedding(doc, meta) {\n    \n    let request = {\n        path: '/embedding',\n        params: {\n            \"id\": meta.id\n        }\n    }\n    \n    let result = {\n        'success': true\n    }\n        \n    try {\n        let response = curl('GET', end_point, request);\n    \n        if (response.status != 200) {\n            log(\"Failed to create embedding\", response.status, response.body)\n            result.success = false\n            result.error = response.body\n        }\n    } catch (e) {\n        log(e)\n        result.success = false\n        result.error = e\n    }\n    \n    \n    return result;\n}",
-      "depcfg": {
-        "curl": [
-          {
-            "hostname": "http://192.168.11.106:5002",
-            "value": "end_point",
-            "auth_type": "no-auth",
-            "username": "",
-            "password": "",
-            "bearer_key": "",
-            "allow_cookies": true,
-            "validate_ssl_certificate": false
-          }
-        ],
-        "source_bucket": "data",
-        "source_scope": "uat",
-        "source_collection": "data",
-        "metadata_bucket": "data",
-        "metadata_scope": "uat",
-        "metadata_collection": "event"
-      },
-      "version": "evt-7.6.1-3200-ee",
-      "enforce_schema": false,
-      "handleruuid": 1737542478,
-      "function_instance_id": "hPLP6",
-      "appname": "contentEvent",
-      "settings": {
-        "dcp_stream_boundary": "from_now",
-        "deployment_status": false,
-        "description": "",
-        "execution_timeout": 60,
-        "language_compatibility": "7.2.0",
-        "log_level": "INFO",
-        "n1ql_consistency": "none",
-        "num_timer_partitions": 128,
-        "processing_status": false,
-        "timer_context_size": 1024,
-        "user_prefix": "eventing",
-        "worker_count": 1
-      },
-      "function_scope": {
-        "bucket": "data",
-        "scope": "uat"
-      }
+  {
+    "appcode": "function OnUpdate(doc, meta) {\n    \n    let new_doc = doc\n    let eventing = new_doc.eventing ?? {}\n    let embeddings = doc.embeddings\n    \n    if ( eventing.success || embeddings ) {\n        return\n    }\n    \n    DoEmbedding(doc, meta)\n}\n\nfunction OnDelete(meta, options) {\n    log(\"Doc deleted/expired\", meta.id);\n}\n\nfunction DoEmbedding(doc, meta) {\n    \n    let request = {\n        path: '/embedding',\n        params: {\n            \"id\": meta.id\n        }\n    }\n    \n    let result = {\n        'success': true\n    }\n        \n    try {\n        let response = curl('GET', end_point, request);\n    \n        if (response.status != 200) {\n            log(\"Failed to create embedding\", response.status, response.body)\n            result.success = false\n            result.error = response.body\n        }\n    } catch (e) {\n        log(e)\n        result.success = false\n        result.error = e\n    }\n    \n    \n    return result;\n}",
+    "depcfg": {
+      "curl": [
+        {
+          "hostname": "http://192.168.11.106:5002",
+          "value": "end_point",
+          "auth_type": "no-auth",
+          "username": "",
+          "password": "",
+          "bearer_key": "",
+          "allow_cookies": true,
+          "validate_ssl_certificate": false
+        }
+      ],
+      "source_bucket": "data",
+      "source_scope": "uat",
+      "source_collection": "data",
+      "metadata_bucket": "data",
+      "metadata_scope": "uat",
+      "metadata_collection": "event"
+    },
+    "version": "evt-7.6.1-3200-ee",
+    "enforce_schema": false,
+    "handleruuid": 102602302,
+    "function_instance_id": "RWW4S2",
+    "appname": "contentEvent",
+    "settings": {
+      "cursor_aware": false,
+      "dcp_stream_boundary": "everything",
+      "deployment_status": false,
+      "description": "",
+      "execution_timeout": 60,
+      "language_compatibility": "7.2.0",
+      "log_level": "INFO",
+      "n1ql_consistency": "none",
+      "num_timer_partitions": 128,
+      "processing_status": false,
+      "timer_context_size": 1024,
+      "user_prefix": "eventing",
+      "worker_count": 1
+    },
+    "function_scope": {
+      "bucket": "data",
+      "scope": "uat"
     }
-  ]
+  }
+]

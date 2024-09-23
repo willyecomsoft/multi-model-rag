@@ -22,6 +22,7 @@ python app.py
 <br>
 
 install poppler-utils
+install tesseract-ocr
 
 <br>
 

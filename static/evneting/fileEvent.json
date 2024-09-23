@@ -1,6 +1,6 @@
 [
   {
-    "appcode": "function OnUpdate(doc, meta) {\n\n    let new_doc = doc\n    let eventing = new_doc.eventing ?? {}\n    \n    if ( eventing.success ) {\n        return\n    }\n    \n    if ( doc.type == 'application/pdf' ) {\n        let embedding_result = DoEmbedding(doc, meta)\n        eventing = {...eventing, ...embedding_result}\n    } else {\n        eventing.success = true\n        eventing.message = 'skip'\n    }\n    \n    eventing.time = new Date()\n    new_doc.eventing = eventing\n    self[meta.id] = new_doc\n    \n    log(\"processed\", meta.id);\n}\n\nfunction DoEmbedding(doc, meta) {\n    \n    let request = {\n        path: '/parse_document',\n        params: {},\n        body: {\n            'id': meta.id,\n            'path': doc.path\n        }\n    }\n    \n    let result = {\n        'success': true\n    }\n        \n    try {\n        let response = curl('POST', end_point, request);\n    \n        if (response.status != 200) {\n            log(\"Failed to create embedding\", response.status, response.body)\n            result.success = false\n            result.error = response.body\n        }\n    } catch (e) {\n        log(e)\n        result.success = false\n        result.error = e\n    }\n    \n    \n    return result;\n}\n\nfunction OnDelete(meta, options) {\n    log(\"Doc deleted/expired\", meta.id);\n}",
+    "appcode": "function OnUpdate(doc, meta) {\n\n    let new_doc = doc\n    let eventing = new_doc.eventing ?? {}\n    \n    if ( eventing.success ) {\n        return\n    }\n    \n    if ( doc.type == 'application/pdf' ) {\n        EventingLog(new_doc, meta, {...eventing, 'success': true, 'message': 'processing'})\n        \n        let parse_result = ParseDoc(doc, meta)\n        eventing = {...eventing, ...parse_result}\n    } else {\n        eventing.success = true\n        eventing.message = 'skip'\n    }\n    \n    EventingLog(new_doc, meta, eventing)\n    \n    log(\"processed\", meta.id);\n}\n\nfunction EventingLog(new_doc, meta, eventing) {\n    log(eventing)\n    eventing.time = new Date()\n    new_doc.eventing = eventing\n    self[meta.id] = new_doc\n}\n\nfunction ParseDoc(doc, meta) {\n    \n    let request = {\n        path: '/parse_document',\n        params: {},\n        body: {\n            'id': meta.id,\n            'path': doc.path\n        }\n    }\n    \n    let result = {\n        'success': true\n    }\n        \n    try {\n        let response = curl('POST', end_point, request);\n    \n        if (response.status != 200) {\n            log(\"Failed to create embedding\", response.status, response.body)\n            result.success = false\n            result.error = response.body\n        }\n    } catch (e) {\n        log(e)\n        result.success = false\n        result.error = e\n    }\n    \n    \n    return result;\n}\n\nfunction OnDelete(meta, options) {\n    log(\"Doc deleted/expired\", meta.id);\n}",
     "depcfg": {
       "buckets": [
         {
@@ -32,10 +32,11 @@
     },
     "version": "evt-7.6.1-3200-ee",
     "enforce_schema": false,
-    "handleruuid": 1577827373,
-    "function_instance_id": "Xgn0j3",
+    "handleruuid": 1229013783,
+    "function_instance_id": "o9*NQ",
     "appname": "fileEvent",
     "settings": {
+      "cursor_aware": false,
       "dcp_stream_boundary": "from_now",
       "deployment_status": false,
       "description": "",
