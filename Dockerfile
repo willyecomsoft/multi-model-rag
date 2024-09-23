@@ -27,7 +27,8 @@ ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
 
 RUN useradd -m workshop && \
-    echo "workshop:password" | chpasswd
+    echo "workshop:password" | chpasswd && \
+    echo "set encoding=utf-8" > "/home/workshop/.vimrc"
     
 RUN chown -R workshop:workshop /app
 

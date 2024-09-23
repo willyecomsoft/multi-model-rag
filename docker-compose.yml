@@ -5,6 +5,8 @@ services:
     image: ollama/ollama
     ports:
       - "11434:11434"
+    networks:
+      - workshop-net
     volumes:
       - ollama-local:/root/.ollama
 
@@ -16,10 +18,16 @@ services:
       - ollama
     ports:
       - 3000:8080
+    networks:
+      - workshop-net
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - open-webui:/app/backend/data
+
+networks:
+  workshop-net:
+    external: true
 
 volumes:
   ollama-local:

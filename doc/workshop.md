@@ -13,6 +13,12 @@
 
 
 ## Setup step
+**0. docker**
+
+```
+docker network create -d bridge workshop-net
+```
+
 **1. OPENAI**
 
 prepare your OPENAI_API_KEY from [OpenAI.](https://platform.openai.com/api-keys)
