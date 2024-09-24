@@ -15,6 +15,8 @@ import sys
 
 load_dotenv()
 
+cluster=None
+
 try:
     # Couchbase connection
     auth = PasswordAuthenticator(os.getenv("CB_USERNAME"), os.getenv("CB_PASSWORD"))
@@ -23,7 +25,6 @@ try:
     print_success("Couchbase setup complete")
 except Exception as e:
     print_error(f"An error occurred: {e}")
-    raise
 
 
 # CRUD operations

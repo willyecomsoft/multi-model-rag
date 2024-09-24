@@ -26,6 +26,11 @@ ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
 
+ENV OLLAMA_BASE_URL=http://ollama:11434
+ENV EE_HOSTNAME=couchbase
+ENV CB_USERNAME=admin
+ENV CB_PASSWORD=workshop
+
 RUN useradd -m workshop && \
     echo "workshop:password" | chpasswd && \
     echo "set encoding=utf-8" > "/home/workshop/.vimrc"
