@@ -36,10 +36,5 @@ docker build -t cb-multi-model-rag .
 ```
 
 ```
-docker run -d --net=workshop-net -p 5002:5002 --name cb-multi-model-rag cb-multi-model-rag
-```
-
-with .env
-```
 docker run --env-file .env -d --net=workshop-net -p 5002:5002 --name cb-multi-model-rag cb-multi-model-rag
 ```

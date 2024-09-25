@@ -9,8 +9,6 @@ RUN apt-get update && apt-get install -y \
     vim \
     tesseract-ocr
 
-RUN mkdir /run/sshd
-
 # Set the working directory
 WORKDIR /app
 
@@ -21,6 +19,19 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+RUN mkdir /run/sshd && \
+    useradd -m workshop && \
+    echo "workshop:password" | chpasswd && \
+    echo "set encoding=utf-8" > "/home/workshop/.vimrc" && \
+    chown -R workshop:workshop /app
+
+# Create start script
+RUN echo '#!/bin/bash' > /start.sh && \
+    echo '/usr/sbin/sshd -D &' >> /start.sh && \
+    echo 'su workshop' >> /start.sh && \
+    echo 'flask run' >> /start.sh && \
+    chmod +x /start.sh
+    
 # Set environment variables
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
@@ -30,21 +41,8 @@ ENV OLLAMA_BASE_URL=http://ollama:11434
 ENV EE_HOSTNAME=couchbase
 ENV CB_USERNAME=admin
 ENV CB_PASSWORD=workshop
-
-RUN useradd -m workshop && \
-    echo "workshop:password" | chpasswd && \
-    echo "set encoding=utf-8" > "/home/workshop/.vimrc"
     
-RUN chown -R workshop:workshop /app
-
 EXPOSE 22
-
-# Create start script
-RUN echo '#!/bin/bash' > /start.sh && \
-    echo '/usr/sbin/sshd -D &' >> /start.sh && \
-    echo 'su workshop' >> /start.sh && \
-    echo 'flask run' >> /start.sh && \
-    chmod +x /start.sh
 
 # Use the start script as the entry point
 CMD ["/start.sh"]
