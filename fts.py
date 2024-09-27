@@ -14,7 +14,6 @@ cluster = Cluster(f'couchbase://{os.getenv("EE_HOSTNAME")}', ClusterOptions(auth
 cluster.wait_until_ready(timedelta(seconds=5))
 print("Couchbase setup complete")
 
-
 try:
 
     result = cluster.search_query('data.test.test-fts', search.QueryStringQuery('test*'), SearchOptions(limit=13, fields=['name', 'type', 'content']))
