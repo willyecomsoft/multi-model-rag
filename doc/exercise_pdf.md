@@ -30,6 +30,7 @@ http://localhost:5002/
 > 2. fileEvent, 當meta更新時, 觸發parse_document api
 > 3. embedding api, 執行embedding
 > 4. contentEvent, parse_document結束後觸發embedding
+> 5. full-text search index
 
 
 ## exercise 1 - parse_document api
@@ -193,3 +194,41 @@ function OnDelete(meta, options) {
 ![ex_2_1_data](/static/images/exercise/ex_2_1_data.png)
 ![ex_2_1_log](/static/images/exercise/ex_2_1_log.png)
 
+
+## exercise 3 - embedding api
+**查看app.py**
+```
+@app.route('/embedding', methods=['GET'])
+def embedding():
+    doc_id = request.args.get('id')
+
+    do_embedding(doc_id)
+
+    return doc_id
+```
+
+## exercise 4 - import contentEvent
+
+**import**
+
+multi-model-rag/static/eventing/contentEvent.json
+-> 修改url
+
+|||
+|--|--|
+|![ex_2_4_import](/static/images/exercise/ex_2_4_import.png)|![ex_2_4_import_url](/static/images/exercise/ex_2_4_import_url.png)|
+
+**deploy**
+![ex_2_4_deploy](/static/images/exercise/ex_2_4_deploy.png)
+
+**check data**
+![ex_2_4_document](/static/images/exercise/ex_2_4_document.png)
+
+
+## exercise 5 - import full-text search index
+
+
+|||
+|--|--|
+|![ex_2_5_index_add](/static/images/exercise/ex_2_5_index_add.png)|![ex_2_5_index_import](/static/images/exercise/ex_2_5_index_import.png)|
+|![ex_2_5_index_import_json](/static/images/exercise/ex_2_5_index_import_json.png)|![ex_2_5_index_import_create](/static/images/exercise/ex_2_5_index_import_create.png)|
