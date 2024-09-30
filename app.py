@@ -107,7 +107,7 @@ def parse_document():
     id = data.get("id")
     path = data.get("path")
 
-    partition_document(id, path)
+    # partition_document(id, path)
 
     return jsonify({
         "message": "File parsed"

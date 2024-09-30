@@ -211,7 +211,7 @@ print_success("Couchbase setup complete")
 ```
 try:
     result = cluster.query(
-        "SELECT META().id, * FROM data.data.data where type = 'test_embedding' LIMIT 10"
+        "SELECT META().id, * FROM data.test.data where type = 'test_embedding' LIMIT 10"
         )
 
     for row in result.rows():
