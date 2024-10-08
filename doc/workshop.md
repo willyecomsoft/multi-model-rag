@@ -35,6 +35,7 @@ follow [couchbase_setup.md](./couchbase_setup.md)
 
 ```
 git clone https://github.com/willyecomsoft/multi-model-rag.git
+cd multi-model-rag
 git checkout workshop
 ```
 
@@ -45,15 +46,15 @@ check .env.example and create  a .env file
 # LLM Keys
 OPENAI_API_KEY={openai_api_key}
 
-OLLAMA_BASE_URL=http://192.168.11.106:11434
+OLLAMA_BASE_URL=http://ollama:11434
 
 # EE Environment Variables 
-EE_HOSTNAME=192.168.11.106
+EE_HOSTNAME=couchbase
 
 
 #Couchbase User Credential
 CB_USERNAME=admin
-CB_PASSWORD=admin
+CB_PASSWORD=workshop
 ```
 
 then follow [dev_setup.md](./dev_setup.md)

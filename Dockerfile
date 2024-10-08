@@ -36,11 +36,6 @@ RUN echo '#!/bin/bash' > /start.sh && \
 ENV FLASK_APP=app.py
 ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
-
-ENV OLLAMA_BASE_URL=http://ollama:11434
-ENV EE_HOSTNAME=couchbase
-ENV CB_USERNAME=admin
-ENV CB_PASSWORD=workshop
     
 EXPOSE 22
 
