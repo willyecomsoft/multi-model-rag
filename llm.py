@@ -64,7 +64,7 @@ def generate_document_chain():
 # run cb vector search
 def multi_model_search(question):
     question_vector = create_openai_embeddings(question)
-    result = cb_vector_search("data", "uat", "search-data", "embeddings", question_vector, ['category', 'content', 'text'])
+    result = cb_vector_search("data", scope, "search-data", "embeddings", question_vector, ['category', 'content', 'text'])
 
     b64 = []
     text = []
