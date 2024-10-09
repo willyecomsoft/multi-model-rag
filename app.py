@@ -16,6 +16,8 @@ from datetime import datetime
 # Load the environment variables
 load_dotenv()
 
+scope = os.getenv("CB_SCOPE")
+
 
 # Initialize the Flask app and the SocketIO instance
 app = Flask(__name__)
@@ -139,7 +141,7 @@ def upload_document():
         "upload_at": datetime.now().timestamp()
     }
 
-    insert_doc('data', 'uat', 'meta', doc_to_insert)
+    insert_doc('data', scope, 'meta', doc_to_insert)
     
     return jsonify({"message": f"File saved to {save_path}"}), 200
 

@@ -15,7 +15,7 @@ import couchbase.subdocument as subdocument
 load_dotenv()
 
 bucket = 'data'
-scope = 'uat'
+scope = os.getenv("CB_SCOPE")
 
 def partition_document(id, path):
     # Extract images, tables, and chunk text

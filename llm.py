@@ -11,8 +11,11 @@ from base64 import b64decode
 from couchbaseops import cb_vector_search
 import sys
 from sharedfunctions.print import print_bold
+import os
 
 load_dotenv()
+
+scope = os.getenv("CB_SCOPE")
 
 # Define the chat model
 chat_openai = ChatOpenAI(model="gpt-4o", temperature=0.05)    

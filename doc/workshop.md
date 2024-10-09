@@ -55,6 +55,7 @@ EE_HOSTNAME=couchbase
 #Couchbase User Credential
 CB_USERNAME=admin
 CB_PASSWORD=workshop
+CB_SCOPE=uat
 ```
 
 then follow [dev_setup.md](./dev_setup.md)
