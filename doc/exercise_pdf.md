@@ -227,8 +227,18 @@ multi-model-rag/static/eventing/contentEvent.json
 
 ## exercise 5 - import full-text search index
 
+static/fts-index.json
 
 |||
 |--|--|
 |![ex_2_5_index_add](/static/images/exercise/ex_2_5_index_add.png)|![ex_2_5_index_import](/static/images/exercise/ex_2_5_index_import.png)|
 |![ex_2_5_index_import_json](/static/images/exercise/ex_2_5_index_import_json.png)|![ex_2_5_index_import_create](/static/images/exercise/ex_2_5_index_import_create.png)|
+
+
+## exercise 6 - ask some question
+
+```
+In the bar charts for 50% read and 50% write workload, how does Couchbase does in terms of throughput in various clsuter sizes?
+```
+
+![question](/static/images/exercise/ex_2_6.png)|
