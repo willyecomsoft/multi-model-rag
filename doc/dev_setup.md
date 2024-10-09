@@ -38,3 +38,10 @@ docker build -t cb-multi-model-rag .
 ```
 docker run --env-file .env -d --net=workshop-net -p 5002:5002 --name cb-multi-model-rag cb-multi-model-rag
 ```
+
+
+```
+docker exec -it cb-multi-model-rag bash
+sed -i 's|localhost:5002/upload|20.82.2.134:5002|' /app/templates/index.html
+sed -i 's|localhost:5002/upload|20.82.2.134:5002|' /app/templates/upload.html
+```
