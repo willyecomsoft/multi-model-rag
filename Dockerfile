@@ -24,4 +24,4 @@ ENV FLASK_RUN_HOST=0.0.0.0
 ENV FLASK_RUN_PORT=5002
 
 # Run the application
-CMD ["flask", "run"]
+CMD ["/app/start.sh"]

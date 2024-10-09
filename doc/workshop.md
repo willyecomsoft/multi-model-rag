@@ -56,6 +56,8 @@ EE_HOSTNAME=couchbase
 CB_USERNAME=admin
 CB_PASSWORD=workshop
 CB_SCOPE=uat
+
+APP_HOST=localhost:5002
 ```
 
 then follow [dev_setup.md](./dev_setup.md)
