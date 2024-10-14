@@ -13,7 +13,7 @@
       ],
       "curl": [
         {
-          "hostname": "http://192.168.11.106:5002",
+          "hostname": "http://20.82.2.134:5002",
           "value": "end_point",
           "auth_type": "no-auth",
           "username": "",
@@ -32,8 +32,8 @@
     },
     "version": "evt-7.6.1-3200-ee",
     "enforce_schema": false,
-    "handleruuid": 1229013783,
-    "function_instance_id": "o9*NQ",
+    "handleruuid": 1952365317,
+    "function_instance_id": "jA7p01",
     "appname": "fileEvent",
     "settings": {
       "cursor_aware": false,

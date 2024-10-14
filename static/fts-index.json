@@ -23,7 +23,7 @@
     "type_field": "_type",
     "types": {
      "uat.data": {
-      "dynamic": false,
+      "dynamic": true,
       "enabled": true,
       "properties": {
        "category": {
@@ -96,12 +96,13 @@
   },
   "sourceType": "gocbcore",
   "sourceName": "data",
-  "sourceUUID": "c0f2201a9a4c10ff00b614c9bb8be7f0",
+  "sourceUUID": "b7863069097fd967b1d9b3ffec527a56",
   "sourceParams": {},
   "planParams": {
    "maxPartitionsPerPIndex": 1024,
    "indexPartitions": 1,
    "numReplicas": 0
   },
-  "uuid": "778b11bac9358da1"
+  "uuid": "6be115124989403a"
  }
+ 

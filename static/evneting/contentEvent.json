@@ -4,7 +4,7 @@
     "depcfg": {
       "curl": [
         {
-          "hostname": "http://192.168.11.106:5002",
+          "hostname": "http://20.82.2.134:5002/",
           "value": "end_point",
           "auth_type": "no-auth",
           "username": "",
@@ -23,8 +23,8 @@
     },
     "version": "evt-7.6.1-3200-ee",
     "enforce_schema": false,
-    "handleruuid": 102602302,
-    "function_instance_id": "RWW4S2",
+    "handleruuid": 443427632,
+    "function_instance_id": "QLtSO3",
     "appname": "contentEvent",
     "settings": {
       "cursor_aware": false,
