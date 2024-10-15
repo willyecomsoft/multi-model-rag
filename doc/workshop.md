@@ -31,7 +31,7 @@ follow [couchbase_setup.md](./couchbase_setup.md)
 
 <br>
 
-**3. dev env**
+**3. git repo**
 
 ```
 git clone https://github.com/willyecomsoft/multi-model-rag.git
@@ -40,6 +40,14 @@ git checkout workshop
 ```
 
 <br>
+
+**4. local ai**
+
+follow [local_ai.md](./local_ai.md)
+
+<br>
+
+**5. .env file**
 
 check .env.example and create  a .env file
 ```
@@ -62,8 +70,7 @@ APP_HOST=localhost:5002
 
 then follow [dev_setup.md](./dev_setup.md)
 
+or follow [dev_workshop_setup.md](./dev_workshop_setup.md)
+
 <br>
 
-**4. local ai**
-
-follow [local_ai.md](./local_ai.md)

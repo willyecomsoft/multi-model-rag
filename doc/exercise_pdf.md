@@ -32,6 +32,9 @@ http://localhost:5002/
 > 4. contentEvent, parse_document結束後觸發embedding
 > 5. full-text search index
 
+## exercise 0 - add couchbase bucket/scope/collection
+
+[couchbase_setup.md](./couchbase_setup.md)
 
 ## exercise 1 - parse_document api
 

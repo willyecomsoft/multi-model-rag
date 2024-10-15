@@ -4,6 +4,8 @@
 
 ## install
 
+https://docs.couchbase.com/server/current/install/install-intro.html
+
 **vm**
 ```
 #!/bin/bash
