@@ -1,32 +1,182 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>File Upload</title>
+    <title>PDF 檔案上傳</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(to bottom right, #ffcc80, #f8bbd0, #ce93d8);
+            font-family: "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .upload-box {
+            border: 3px dashed #ffb74d;
+            border-radius: 12px;
+            padding: 60px 40px;
+            background-color: #ffffffdd;
+            text-align: center;
+            width: 500px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .upload-box.dragover {
+            background-color: #ffe0b2;
+            transform: scale(1.02);
+        }
+
+        .upload-box input {
+            display: none;
+        }
+
+        .upload-box label {
+            display: inline-block;
+            padding: 12px 24px;
+            border: 2px solid #f06292;
+            border-radius: 6px;
+            background-color: #f06292;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .upload-box label:hover {
+            background-color: #ec407a;
+        }
+
+        .preview {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #4e342e;
+        }
+
+        .error {
+            color: #c62828;
+            margin-top: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 30px; /* 從 bottom 改為 top */
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to right, #ffe082, #ffd54f); /* 成功色調 */
+            color: #6d4c41;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            z-index: 9999;
+        }
+
+        .toast.error {
+            background: linear-gradient(to right, #f8bbd0, #f48fb1); /* 錯誤色調 */
+            color: #880e4f;
+        }
+
+    </style>
 </head>
 <body>
-    <input type="file" id="fileInput">
+    <div class="upload-box" id="dropZone">
+        <p>拖曳 PDF 檔案到這裡<br>或點擊以下按鈕上傳</p>
+        <input type="file" id="fileInput" accept="application/pdf">
+        <label for="fileInput">選擇 PDF 檔案</label>
+        <div class="preview" id="preview"></div>
+        <div class="error" id="errorMsg"></div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
     <script>
-        document.getElementById('fileInput').addEventListener('change', function(event) {
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const preview = document.getElementById('preview');
+        const errorMsg = document.getElementById('errorMsg');
+        const toast = document.getElementById('toast');
+
+        function clearMessages() {
+            preview.textContent = '';
+            errorMsg.textContent = '';
+        }
+
+        function isPDF(file) {
+            return file && file.type === 'application/pdf';
+        }
+
+        function showPreview(file) {
+            preview.textContent = `預覽：${file.name}（${(file.size / 1024).toFixed(2)} KB）`;
+        }
+
+        function showToast(message, isError = false) {
+            toast.textContent = message;
+            toast.className = isError ? 'toast error' : 'toast';
+            toast.style.opacity = '1';
+            setTimeout(() => {
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+
+        function uploadFile(file) {
+            if (!isPDF(file)) {
+                errorMsg.textContent = '只允許上傳 PDF 檔案';
+                showToast('上傳失敗：只允許 PDF 檔案', true);
+                return;
+            }
+
+            showPreview(file);
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch('http://localhost:5002/upload_document', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                showToast('檔案上傳成功');
+                console.log('Success:', data);
+            })
+            .catch(error => {
+                showToast('上傳失敗，請稍後再試', true);
+                console.error('Error:', error);
+            });
+        }
+
+        fileInput.addEventListener('change', function(event) {
+            clearMessages();
             const file = event.target.files[0];
             if (file) {
-                const formData = new FormData();
-                formData.append('file', file);
+                uploadFile(file);
+            }
+        });
 
-                fetch('http://localhost:5002/upload_document', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('File uploaded successfully:', data);
-                    alert('File uploaded successfully')
-                })
-                .catch(error => {
-                    console.error('Error uploading file:', error);
-                    alert('Error')
-                });
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            clearMessages();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                uploadFile(file);
             }
         });
     </script>

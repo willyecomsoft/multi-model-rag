@@ -81,6 +81,8 @@ def multi_model_search(question):
 
         if category == "image":
             b64.append(fields["content"])
+        else:
+            text.append(fields["text"])
         
     return doc_ids, documents, b64, text
 
@@ -96,7 +98,7 @@ def prompt_func(dict):
     content = [
         {
             "type": "text", 
-            "text": f"""Answer the question based only on the following context, which can include text, tables, and the below image:
+            "text": f"""請以問題的語言回答, Answer the question based only on the following context, which can include text, tables, and the below image:
                 Question: {dict["question"]}
 
                 Text and tables:

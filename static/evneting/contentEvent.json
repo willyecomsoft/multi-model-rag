@@ -28,7 +28,7 @@
     "appname": "contentEvent",
     "settings": {
       "cursor_aware": false,
-      "dcp_stream_boundary": "everything",
+      "dcp_stream_boundary": "from_now",
       "deployment_status": false,
       "description": "",
       "execution_timeout": 60,

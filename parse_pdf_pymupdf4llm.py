@@ -15,11 +15,6 @@ load_dotenv()
 bucket = 'data'
 scope = os.getenv("CB_SCOPE")
 
-pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\Couchbase_PoC_materials_TechmanRobot\TT_AXM_CFC_250305 明基健康生活_發票底稿出貨應收作業_v00.pdf"
-#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\[Partial]2023-Altoros-NoSQL-Dbaas-Performance-Capella-Atlas-Dynamo-Redis-pages.pdf"
-#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\Couchbase_PoC_materials_TechmanRobot\605385_112Q4_合併_完稿財報-電子書.pdf"
-#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\豐收款線上收款API開發規格書_V1.23.pdf"
-
 
 def encode_image(image_path):
     ''' Getting the base64 string '''
@@ -27,7 +22,7 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def partition_document(id, path, filename="data.pdf"):
+def partition_document(file_id, pdf_path, filename="data.pdf"):
     print("partition_pdf...")
 
     image_path = str(time.time())
@@ -45,13 +40,13 @@ def partition_document(id, path, filename="data.pdf"):
     docs = []
     for i, element in enumerate(elements):
         doc = {
+            "file_id": file_id,
             "metadata": element.get('metadata', None),
             "category": "text",
-            "content": element.get('text', ''),
-
+            "text": element.get('text', ''),
         }
         docs.append(doc)
-        insert_doc(bucket, scope, "data", doc, str(uuid.uuid4()))
+        insert_doc(bucket, scope, "data", doc)
 
 
     for img_file in sorted(os.listdir(image_path)):
@@ -71,5 +66,10 @@ def partition_document(id, path, filename="data.pdf"):
 
 
         
+#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\Couchbase_PoC_materials_TechmanRobot\TT_AXM_CFC_250305 明基健康生活_發票底稿出貨應收作業_v00.pdf"
+#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\[Partial]2023-Altoros-NoSQL-Dbaas-Performance-Capella-Atlas-Dynamo-Redis-pages.pdf"
+#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\Couchbase_PoC_materials_TechmanRobot\605385_112Q4_合併_完稿財報-電子書.pdf"
+#pdf_path = r"C:\Users\w1232_rxxlb\OneDrive\桌面\豐收款線上收款API開發規格書_V1.23.pdf"
+#pdf_path = "/Users/willy/Desktop/project/Couchbase/TechmanRobot/OneDrive_1_2025-3-28/605385_112Q4_合併_完稿財報-電子書.pdf"
 
-partition_document("ddd", pdf_path)
+#partition_document("ddd", pdf_path)

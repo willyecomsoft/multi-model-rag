@@ -7,7 +7,8 @@ import time
 from langchain.schema.runnable import RunnableLambda
 import os 
 from sharedfunctions.print import print_error, print_success, print_bold
-from parsedoc import partition_document, do_embedding
+from parsedoc import do_embedding
+from parse_pdf_pymupdf4llm import partition_document
 from couchbaseops import run_query, insert_doc, get_doc, subdocument_upsert
 import sys
 from datetime import datetime
