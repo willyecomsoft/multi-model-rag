@@ -20,7 +20,7 @@ def create_embedding(text = 'hello'):
     return embedding[0]
 
 def create_openai_embeddings(input_message):
-    return client_openai.embeddings.create(input = [input_message], model="text-embedding-ada-002").data[0].embedding
+    return client_openai.embeddings.create(input = [input_message], model="text-embedding-3-small").data[0].embedding
 
 if __name__ == '__main__':
     print(create_embedding())

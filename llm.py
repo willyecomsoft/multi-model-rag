@@ -36,7 +36,7 @@ Question: {input}""")
 
 # Create embeddings
 def create_openai_embeddings(input_message):
-    return client_openai.embeddings.create(input = [input_message], model="text-embedding-ada-002").data[0].embedding
+    return client_openai.embeddings.create(input = [input_message], model="text-embedding-3-small").data[0].embedding
 
 # Define the query transform prompt
 query_transform_prompt = ChatPromptTemplate.from_messages(
@@ -98,10 +98,10 @@ def prompt_func(dict):
     content = [
         {
             "type": "text", 
-            "text": f"""請以問題的語言回答, Answer the question based only on the following context, which can include text, tables, and the below image:
+            "text": f"""請以問題的語言回答, 並依照提供的內容回答, 內容為markdown格式, 內容可能有跨頁內容, 請先重新整理再回答:
                 Question: {dict["question"]}
 
-                Text and tables:
+                markdown Text:
                 {format_texts}
             """
         }
