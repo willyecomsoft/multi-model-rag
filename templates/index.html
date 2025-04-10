@@ -3,6 +3,7 @@
 <html>
 <head>
     <title>Chatbot</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <style>
@@ -229,12 +230,19 @@
 
         socket.on('response', function(msg) {
             const { timestamp, message_string, documents, document_ids } = msg;
+            
+            // 使用 marked.js 将 AI 的 Markdown 格式化为 HTML
+            const htmlMessage = marked.parse(message_string);
+
+            console.log(htmlMessage)
 
             if (timestamp === lastTimestamp) {
-                $('.system-message:last').text(message_string);
+                //$('.system-message:last').text(message_string);
+                $('.system-message:last').html(htmlMessage);
             } else {
-                $('#chatbox').append('<p class="system-message">' + message_string + '</p>');
-                $('.system-message:last').text(message_string);
+                $('#chatbox').append('<p class="system-message">' + htmlMessage + '</p>');
+                //$('.system-message:last').text(message_string);
+                $('.system-message:last').html(htmlMessage);
             }
             lastTimestamp = timestamp;
             $('#chatbox').scrollTop($('#chatbox')[0].scrollHeight);

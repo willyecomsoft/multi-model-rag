@@ -4,7 +4,7 @@
     "depcfg": {
       "curl": [
         {
-          "hostname": "http://20.82.2.134:5002/",
+          "hostname": "http://host.docker.internal:5002/",
           "value": "end_point",
           "auth_type": "no-auth",
           "username": "",

@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "3c1125a0-5411-4e0a-b4a8-2d0770e7599d",
+		"name": "couchbase-workshop",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19423798"
+	},
+	"item": [
+		{
+			"name": "workshop",
+			"item": [
+				{
+					"name": "create bucket",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{BUCKET}}",
+									"type": "text"
+								},
+								{
+									"key": "ramQuota",
+									"value": "1000",
+									"type": "text"
+								},
+								{
+									"key": "bucketType",
+									"value": "couchbase",
+									"type": "text"
+								},
+								{
+									"key": "flushEnabled",
+									"value": "1",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{EE_HOSTNAME}}:8091/pools/default/buckets",
+							"protocol": "http",
+							"host": [
+								"{{EE_HOSTNAME}}"
+							],
+							"port": "8091",
+							"path": [
+								"pools",
+								"default",
+								"buckets"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create scope",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{SCOPE}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{EE_HOSTNAME}}:8091/pools/default/buckets/{{BUCKET}}/scopes",
+							"protocol": "http",
+							"host": [
+								"{{EE_HOSTNAME}}"
+							],
+							"port": "8091",
+							"path": [
+								"pools",
+								"default",
+								"buckets",
+								"{{BUCKET}}",
+								"scopes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create collection",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "{{SCOPE}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{EE_HOSTNAME}}:8091/pools/default/buckets/{{BUCKET}}/scopes/{{SCOPE}}/collections",
+							"protocol": "http",
+							"host": [
+								"{{EE_HOSTNAME}}"
+							],
+							"port": "8091",
+							"path": [
+								"pools",
+								"default",
+								"buckets",
+								"{{BUCKET}}",
+								"scopes",
+								"{{SCOPE}}",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eventing -fileEvent",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"appcode\": \"function OnUpdate(doc, meta) {\\n\\n    let new_doc = doc\\n    let eventing = new_doc.eventing ?? {}\\n    \\n    if ( eventing.success ) {\\n        return\\n    }\\n    \\n    if ( doc.type == 'application/pdf' ) {\\n        EventingLog(new_doc, meta, {...eventing, 'success': true, 'message': 'processing'})\\n        \\n        let parse_result = ParseDoc(doc, meta)\\n        eventing = {...eventing, ...parse_result}\\n    } else {\\n        eventing.success = true\\n        eventing.message = 'skip'\\n    }\\n    \\n    EventingLog(new_doc, meta, eventing)\\n    \\n    log(\\\"processed\\\", meta.id);\\n}\\n\\nfunction EventingLog(new_doc, meta, eventing) {\\n    log(eventing)\\n    eventing.time = new Date()\\n    new_doc.eventing = eventing\\n    self[meta.id] = new_doc\\n}\\n\\nfunction ParseDoc(doc, meta) {\\n    \\n    let request = {\\n        path: '/parse_document',\\n        params: {},\\n        body: {\\n            'id': meta.id,\\n            'path': doc.path\\n        }\\n    }\\n    \\n    let result = {\\n        'success': true\\n    }\\n        \\n    try {\\n        let response = curl('POST', end_point, request);\\n    \\n        if (response.status != 200) {\\n            log(\\\"Failed to create embedding\\\", response.status, response.body)\\n            result.success = false\\n            result.error = response.body\\n        }\\n    } catch (e) {\\n        log(e)\\n        result.success = false\\n        result.error = e\\n    }\\n    \\n    \\n    return result;\\n}\\n\\nfunction OnDelete(meta, options) {\\n    log(\\\"Doc deleted/expired\\\", meta.id);\\n}\",\n    \"depcfg\": {\n      \"buckets\": [\n        {\n          \"alias\": \"self\",\n          \"bucket_name\": \"data\",\n          \"scope_name\": \"uat\",\n          \"collection_name\": \"meta\",\n          \"access\": \"rw\"\n        }\n      ],\n      \"curl\": [\n        {\n          \"hostname\": \"http://host.docker.internal:5002\",\n          \"value\": \"end_point\",\n          \"auth_type\": \"no-auth\",\n          \"username\": \"\",\n          \"password\": \"\",\n          \"bearer_key\": \"\",\n          \"allow_cookies\": true,\n          \"validate_ssl_certificate\": false\n        }\n      ],\n      \"source_bucket\": \"data\",\n      \"source_scope\": \"uat\",\n      \"source_collection\": \"meta\",\n      \"metadata_bucket\": \"data\",\n      \"metadata_scope\": \"uat\",\n      \"metadata_collection\": \"event\"\n    },\n    \"version\": \"evt-7.6.1-3200-ee\",\n    \"enforce_schema\": false,\n    \"handleruuid\": 1952365317,\n    \"function_instance_id\": \"jA7p01\",\n    \"appname\": \"fileEvent\",\n    \"settings\": {\n      \"cursor_aware\": false,\n      \"dcp_stream_boundary\": \"from_now\",\n      \"deployment_status\": false,\n      \"description\": \"\",\n      \"execution_timeout\": 300,\n      \"language_compatibility\": \"7.2.0\",\n      \"log_level\": \"INFO\",\n      \"n1ql_consistency\": \"none\",\n      \"num_timer_partitions\": 128,\n      \"processing_status\": false,\n      \"timer_context_size\": 1024,\n      \"user_prefix\": \"eventing\",\n      \"worker_count\": 1\n    },\n    \"function_scope\": {\n      \"bucket\": \"data\",\n      \"scope\": \"uat\"\n    }\n  }\n]\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{EVENTING_HOSTNAME}}:8096/api/v1/functions",
+							"protocol": "http",
+							"host": [
+								"{{EVENTING_HOSTNAME}}"
+							],
+							"port": "8096",
+							"path": [
+								"api",
+								"v1",
+								"functions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "eventing -contentEvent",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "[\n  {\n    \"appcode\": \"function OnUpdate(doc, meta) {\\n    \\n    let new_doc = doc\\n    let eventing = new_doc.eventing ?? {}\\n    let embeddings = doc.embeddings\\n    \\n    if ( eventing.success || embeddings ) {\\n        return\\n    }\\n    \\n    DoEmbedding(doc, meta)\\n}\\n\\nfunction OnDelete(meta, options) {\\n    log(\\\"Doc deleted/expired\\\", meta.id);\\n}\\n\\nfunction DoEmbedding(doc, meta) {\\n    \\n    let request = {\\n        path: '/embedding',\\n        params: {\\n            \\\"id\\\": meta.id\\n        }\\n    }\\n    \\n    let result = {\\n        'success': true\\n    }\\n        \\n    try {\\n        let response = curl('GET', end_point, request);\\n    \\n        if (response.status != 200) {\\n            log(\\\"Failed to create embedding\\\", response.status, response.body)\\n            result.success = false\\n            result.error = response.body\\n        }\\n    } catch (e) {\\n        log(e)\\n        result.success = false\\n        result.error = e\\n    }\\n    \\n    \\n    return result;\\n}\",\n    \"depcfg\": {\n      \"curl\": [\n        {\n          \"hostname\": \"http://host.docker.internal:5002/\",\n          \"value\": \"end_point\",\n          \"auth_type\": \"no-auth\",\n          \"username\": \"\",\n          \"password\": \"\",\n          \"bearer_key\": \"\",\n          \"allow_cookies\": true,\n          \"validate_ssl_certificate\": false\n        }\n      ],\n      \"source_bucket\": \"data\",\n      \"source_scope\": \"uat\",\n      \"source_collection\": \"data\",\n      \"metadata_bucket\": \"data\",\n      \"metadata_scope\": \"uat\",\n      \"metadata_collection\": \"event\"\n    },\n    \"version\": \"evt-7.6.1-3200-ee\",\n    \"enforce_schema\": false,\n    \"handleruuid\": 443427632,\n    \"function_instance_id\": \"QLtSO3\",\n    \"appname\": \"contentEvent\",\n    \"settings\": {\n      \"cursor_aware\": false,\n      \"dcp_stream_boundary\": \"from_now\",\n      \"deployment_status\": false,\n      \"description\": \"\",\n      \"execution_timeout\": 60,\n      \"language_compatibility\": \"7.2.0\",\n      \"log_level\": \"INFO\",\n      \"n1ql_consistency\": \"none\",\n      \"num_timer_partitions\": 128,\n      \"processing_status\": false,\n      \"timer_context_size\": 1024,\n      \"user_prefix\": \"eventing\",\n      \"worker_count\": 1\n    },\n    \"function_scope\": {\n      \"bucket\": \"data\",\n      \"scope\": \"uat\"\n    }\n  }\n]\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{EVENTING_HOSTNAME}}:8096/api/v1/functions",
+							"protocol": "http",
+							"host": [
+								"{{EVENTING_HOSTNAME}}"
+							],
+							"port": "8096",
+							"path": [
+								"api",
+								"v1",
+								"functions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create search index",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"search-data\",\n  \"type\": \"fulltext-index\",\n  \"params\": {\n   \"doc_config\": {\n    \"docid_prefix_delim\": \"\",\n    \"docid_regexp\": \"\",\n    \"mode\": \"scope.collection.type_field\",\n    \"type_field\": \"type\"\n   },\n   \"mapping\": {\n    \"default_analyzer\": \"standard\",\n    \"default_datetime_parser\": \"dateTimeOptional\",\n    \"default_field\": \"_all\",\n    \"default_mapping\": {\n     \"dynamic\": true,\n     \"enabled\": false\n    },\n    \"default_type\": \"_default\",\n    \"docvalues_dynamic\": false,\n    \"index_dynamic\": true,\n    \"store_dynamic\": false,\n    \"type_field\": \"_type\",\n    \"types\": {\n     \"uat.data\": {\n      \"dynamic\": true,\n      \"enabled\": true,\n      \"properties\": {\n       \"category\": {\n        \"enabled\": true,\n        \"dynamic\": false,\n        \"fields\": [\n         {\n          \"docvalues\": true,\n          \"include_in_all\": true,\n          \"include_term_vectors\": true,\n          \"index\": true,\n          \"name\": \"category\",\n          \"store\": true,\n          \"type\": \"text\"\n         }\n        ]\n       },\n       \"content\": {\n        \"enabled\": true,\n        \"dynamic\": false,\n        \"fields\": [\n         {\n          \"docvalues\": true,\n          \"include_in_all\": true,\n          \"include_term_vectors\": true,\n          \"index\": true,\n          \"name\": \"content\",\n          \"store\": true,\n          \"type\": \"text\"\n         }\n        ]\n       },\n       \"embeddings\": {\n        \"enabled\": true,\n        \"dynamic\": false,\n        \"fields\": [\n         {\n          \"dims\": 1536,\n          \"index\": true,\n          \"name\": \"embeddings\",\n          \"similarity\": \"l2_norm\",\n          \"type\": \"vector\",\n          \"vector_index_optimized_for\": \"recall\"\n         }\n        ]\n       },\n       \"text\": {\n        \"enabled\": true,\n        \"dynamic\": false,\n        \"fields\": [\n         {\n          \"docvalues\": true,\n          \"include_in_all\": true,\n          \"include_term_vectors\": true,\n          \"index\": true,\n          \"name\": \"text\",\n          \"store\": true,\n          \"type\": \"text\"\n         }\n        ]\n       }\n      }\n     }\n    }\n   },\n   \"store\": {\n    \"indexType\": \"scorch\",\n    \"segmentVersion\": 16\n   }\n  },\n  \"sourceType\": \"gocbcore\",\n  \"sourceName\": \"data\",\n  \"sourceParams\": {},\n  \"planParams\": {\n   \"maxPartitionsPerPIndex\": 1024,\n   \"indexPartitions\": 1,\n   \"numReplicas\": 0\n  }\n }\n ",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://{{SEARCH_HOSTNAME}}:8094/api/bucket/{{BUCKET}}/scope/{{SCOPE}}/index/search-data",
+							"protocol": "http",
+							"host": [
+								"{{SEARCH_HOSTNAME}}"
+							],
+							"port": "8094",
+							"path": [
+								"api",
+								"bucket",
+								"{{BUCKET}}",
+								"scope",
+								"{{SCOPE}}",
+								"index",
+								"search-data"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
