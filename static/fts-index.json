@@ -61,7 +61,7 @@
         "dynamic": false,
         "fields": [
          {
-          "dims": 1536,
+          "dims": 3072,
           "index": true,
           "name": "embeddings",
           "similarity": "l2_norm",

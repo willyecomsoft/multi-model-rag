@@ -36,7 +36,7 @@ Question: {input}""")
 
 # Create embeddings
 def create_openai_embeddings(input_message):
-    return client_openai.embeddings.create(input = [input_message], model="text-embedding-3-small").data[0].embedding
+    return client_openai.embeddings.create(input = [input_message], model="text-embedding-3-large").data[0].embedding
 
 # Define the query transform prompt
 query_transform_prompt = ChatPromptTemplate.from_messages(
