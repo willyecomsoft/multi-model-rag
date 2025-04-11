@@ -36,7 +36,7 @@ docker build -t cb-multi-model-rag .
 ```
 
 ```
-docker run --env-file .env -d -p 5002:5002 --name cb-multi-model-rag cb-multi-model-rag
+docker run --env-file .env -d -p 5002:5002 --name cb-multi-model-rag willyliang/cb-multi-model-rag
 ```
 
 
