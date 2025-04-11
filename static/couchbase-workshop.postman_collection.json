@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "3c1125a0-5411-4e0a-b4a8-2d0770e7599d",
+		"_postman_id": "58de9b8d-2500-47fa-b3d4-69a7af681323",
 		"name": "couchbase-workshop",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "19423798"
@@ -119,7 +119,7 @@
 					"response": []
 				},
 				{
-					"name": "create collection",
+					"name": "create collection - meta",
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -143,7 +143,107 @@
 							"urlencoded": [
 								{
 									"key": "name",
-									"value": "{{SCOPE}}",
+									"value": "meta",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{EE_HOSTNAME}}:8091/pools/default/buckets/{{BUCKET}}/scopes/{{SCOPE}}/collections",
+							"protocol": "http",
+							"host": [
+								"{{EE_HOSTNAME}}"
+							],
+							"port": "8091",
+							"path": [
+								"pools",
+								"default",
+								"buckets",
+								"{{BUCKET}}",
+								"scopes",
+								"{{SCOPE}}",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create collection - data",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "data",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "http://{{EE_HOSTNAME}}:8091/pools/default/buckets/{{BUCKET}}/scopes/{{SCOPE}}/collections",
+							"protocol": "http",
+							"host": [
+								"{{EE_HOSTNAME}}"
+							],
+							"port": "8091",
+							"path": [
+								"pools",
+								"default",
+								"buckets",
+								"{{BUCKET}}",
+								"scopes",
+								"{{SCOPE}}",
+								"collections"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "create collection - event",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "couchbase",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "name",
+									"value": "event",
 									"type": "text"
 								}
 							]
